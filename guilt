@@ -603,14 +603,12 @@ pop_all_patches()
 # usage: remove_ref <refname>
 remove_ref()
 {
-	(
-		# does the ref exist?
-		r=`git show-ref --verify -s "$1" 2> /dev/null`
-		[ $? -ne 0 ] && exit 0
+	# does the ref exist?
+	r=`git show-ref --verify -s "$1" 2> /dev/null`
+	[ $? -ne 0 ] && exit 0
 
-		# remove it
-		git update-ref -d "$1" "$r"
-	)
+	# remove it
+	git update-ref -d "$1" "$r"
 }
 
 # usage: commit patchname parent
@@ -623,7 +621,7 @@ commit()
 		pname="$1"
 		cd_to_toplevel
 
-		git diff-files --no-ext-diff --name-only | (while read n; do git update-index "$n" ; done)
+		git diff-files --no-ext-diff --name-only | while read n; do git update-index "$n" ; done
 
 		# grab a commit message out of the patch
 		do_get_header "$p" > "$TMP_MSG"
@@ -706,7 +704,7 @@ push_patch()
 		cd_to_toplevel
 
 		# apply the patch if and only if there is something to apply
-		if [ `do_get_patch "$p" | wc -l` -gt 0 ]; then
+		if grep -q -e "^diff " -e "^--- " "$p"; then
 			if [ "$bail_action" = abort ]; then
 				reject=""
 			fi
