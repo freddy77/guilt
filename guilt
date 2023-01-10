@@ -679,7 +679,7 @@ commit()
 			git update-ref -m "$GIT_REFLOG_ACTION" HEAD $commitish
 		else
 			git branch $GUILT_PREFIX$branch $commitish
-			git symbolic-ref HEAD refs/heads/$GUILT_PREFIX$branch
+			git symbolic-ref -m "$GIT_REFLOG_ACTION" HEAD refs/heads/$GUILT_PREFIX$branch
 		fi
 
 		# mark patch as applied
