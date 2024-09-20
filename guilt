@@ -148,6 +148,16 @@ fi
 # Library goodies
 #
 
+# AWK function to get patch from line
+# splitting and getting the patch name could be pretty complicated
+awk_patch='function patch(line) {
+	match(line, /^[[:space:]]*/);
+	start = RLENGTH + 1;
+	end = match(line, /[[:space:]]*(#.*)?$/);
+	if (end < start) { end = start }
+	return substr(line, start, end - start)
+}'
+
 # usage: valid_patchname <patchname>
 valid_patchname()
 {
@@ -233,25 +243,39 @@ get_prev()
 
 get_full_series()
 {
-	# ignore all lines matching:
-	#	- empty lines
-	#	- whitespace only
-	#	- optional whitespace followed by '#' followed by more
-	#	  optional whitespace
-	# also remove comments from end of lines
-	sed -n -e "/^[[:space:]]*\(#.*\)*\$/ ! {
-		s/[[:space:]]*#.*\$//
-
-		p
-		}
-		" "$series"
+	awk "$awk_patch"'
+{
+	p = patch($0);
+	if (length(p)) { print p }
+}' < "$series"
 }
 
 get_series()
 {
-	get_full_series | while read p; do
-		check_guards "$p" && echo "$p"
-	done
+	awk -v infile="$guards_file" '
+BEGIN {
+	while ((getline < infile) > 0) {
+		guards[$1] = 1;
+	}
+	close(infile);
+}
+'"$awk_patch"'
+{
+	p = patch($0);
+	if (length(p)) {
+		okay = 1
+		split(substr($0, end), list);
+		for(i=1; i<=length(list); i++) {
+			g = list[i];
+			start = substr(g, 1, 2);
+			if ((start == "#+" && guards[substr(g, 3)] == "") || (start == "#-" && guards[substr(g, 3)] != "")) {
+				okay = 0;
+				break;
+			}
+		}
+		if (okay) { print p }
+	}
+}' < "$series"
 }
 
 # usage: check_guards <patch>
@@ -280,21 +304,21 @@ check_guards()
 # usage: get_guards <patch>
 get_guards()
 {
-	awk -v pname="$1" '
-($1 == pname) {
-	guards = "";
-
-	for(i=2; i<=NF; i++) {
-		sub(/#[^+-]*/, "", $i);
-		if (length($i)) {
-			if (length(guards))
-				guards = guards " " $i;
-			else
-				guards = $i;
+	awk -v pname="$1" "$awk_patch"'
+{
+	if (patch($0) == pname) {
+		guards = "";
+		sep = "";
+		split(substr($0, end), list);
+		for(i=1; i<=length(list); i++) {
+			g = list[i];
+			if (match(g, /^#[+-]/)) {
+				guards = guards sep substr(g, 2);
+				sep = " ";
+			}
 		}
+		print guards;
 	}
-
-	print guards;
 }' < "$series"
 }
 
