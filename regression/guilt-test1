@@ -1,0 +1,97 @@
+#!/bin/sh
+
+tab="	"
+space=" "
+
+check()
+{
+	out=$(printf '%s\n' "$1" | awk "$awk_patch"'
+{
+	p = patch($0);
+	print "__" p "__"
+}')
+	if [ "$out" != "__$2__" ]; then
+		echo "Got ${out} expected __${2}__" >&2
+		exit 1
+	fi
+}
+
+_main()
+{
+# no spaces at all
+check "mao.patch" "mao.patch"
+
+# spaces at beginning
+check " ${tab}mao.patch" "mao.patch"
+
+# spaces at end
+check "mao.patch${tab} " "mao.patch"
+
+# spaces at both
+check "  mao.patch${tab} " "mao.patch"
+
+# spaces everywhere
+check "  mao ${tab}bao.patch${tab} " "mao ${tab}bao.patch"
+
+# add comment at the end
+check "  mao ${tab}bao.patch${tab} # hello" "mao ${tab}bao.patch"
+
+# add another comment at the end
+check "  mao ${tab}bao.patch${tab} # hello # bao" "mao ${tab}bao.patch"
+
+# empty
+check "" ""
+
+# just spaces
+check "  " ""
+
+# just tabs
+check "$tab$tab" ""
+
+# just comment
+check "# comment" ""
+
+# comment with initial spaces
+check "  # comment" ""
+
+# check get_full_series
+series='input'
+cat > "$series" <<EOF
+# first line
+  $tab
+    # third line # other
+  mao.patch$space
+EOF
+out=$(get_full_series)
+if [ "$out" != "mao.patch" ]; then
+	echo "Error in get_full_series, output \"$out\"" >&2
+	exit 1
+fi
+
+# check get_guards
+cat > "$series" <<EOF
+mao.patch # gen #-foo dummy #+bar
+EOF
+out=$(get_guards "mao.patch")
+if [ "$out" != "-foo +bar" ]; then
+	echo "Error in get_guards, output \"$out\"" >&2
+	exit 1
+fi
+
+# check get_series
+guards_file='guards'
+rm -f "$guards_file"
+cat > "$series" <<EOF
+foo.patch #-foo
+bar.patch #+bar
+EOF
+out=$(get_series)
+if [ "$out" != "foo.patch" ]; then
+	echo "Error in get_series, output \"$out\"" >&2
+	exit 1
+fi
+
+rm -f "$series"
+
+echo "All tests passed!"
+}
