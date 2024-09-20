@@ -52,6 +52,6 @@ _tac()
 
 _seq()
 {
-	seq "$@"
+	seq -- "$@"
 	return $?
 }

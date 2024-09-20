@@ -43,7 +43,7 @@ for rev in `git rev-list $rhash`; do
 	# valid patch name.
 	fname=`printf %s "$s" | sed -e "s/&/and/g" -e "s/[ :]/_/g" -e "s,[/\\],-,g" \
 			-e "s/['\\[{}<>(),$]//g" -e 's/]//g' -e 's/\*/-/g' \
-			-e 's/\?/-/g' -e 's/\.\.\.*/./g' -e 's/^\.//' \
+			-e 's/[?]/-/g' -e 's/\.\.\.*/./g' -e 's/^\.//' \
 			-e 's/\.patch$//' -e 's/\.$//' | tr A-Z a-z`
 
 	if [ `expr length "$fname"` -gt 80 ] ; then
