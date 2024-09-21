@@ -41,9 +41,9 @@ for rev in `git rev-list $rhash`; do
 
 	# Try to convert the first line of the commit message to a
 	# valid patch name.
-	fname=`printf %s "$s" | sed -e "s/&/and/g" -e "s/[ :]/_/g" -e "s,[/\\],-,g" \
-			-e "s/['\\[{}<>(),$]//g" -e 's/]//g' -e 's/\*/-/g' \
-			-e 's/[?]/-/g' -e 's/\.\.\.*/./g' -e 's/^\.//' \
+	fname=`printf %s "$s" | sed -e "s/&/and/g" -e 'y; :?*/\\\\;__----;' \
+			-e "s/['\\[{}<>(),$]//g" -e 's/]//g' \
+			-e 's/\.\.\.*/./g' -e 's/^\.//' \
 			-e 's/\.patch$//' -e 's/\.$//' | tr A-Z a-z`
 
 	if [ `printf %s "$fname" | wc -c` -gt 80 ] ; then
