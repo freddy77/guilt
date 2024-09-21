@@ -140,7 +140,8 @@ function setup_guilt_repo
 
 function reset_git_repo
 {
-	git checkout master
+	git checkout master 2>&1 | \
+		sed -e "s:Already on '\\(.*\\)':Already on \"\\1\":"
 
 	git reset --hard d4850419ccc1146c7169f500725ce504b9774ed0
 

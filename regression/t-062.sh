@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # Test that the guilt.reusebranch=true setting works.
 #

@@ -46,7 +46,7 @@ for rev in `git rev-list $rhash`; do
 			-e 's/[?]/-/g' -e 's/\.\.\.*/./g' -e 's/^\.//' \
 			-e 's/\.patch$//' -e 's/\.$//' | tr A-Z a-z`
 
-	if [ `expr length "$fname"` -gt 80 ] ; then
+	if [ `printf %s "$fname" | wc -c` -gt 80 ] ; then
 		# Limit the patch length to about 80 chars.  While this is
 		# arbitrary, we have to have a limit to avoid trying to
 		# create filenames that are too long for the filesystem to
