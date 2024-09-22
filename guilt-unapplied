@@ -16,7 +16,7 @@ if [ $# -ne 0 ]; then
 fi
 
 n=`wc -l < "$applied"`
-n=`expr $n + 1`
+n=$(( n + 1 ))
 
 get_series | sed -n -e "$n,\$p"
 

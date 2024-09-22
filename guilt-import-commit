@@ -72,7 +72,7 @@ for rev in `git rev-list $rhash`; do
 	fname_base=$fname
 	while [ -f "$GUILT_DIR/$branch/$fname.patch" ]; do
 		fname="$fname_base-$mangle_prefix"
-	        mangle_prefix=`expr $mangle_prefix + 1`
+	        mangle_prefix=$(( mangle_prefix + 1 ))
 		disp "Patch under that name exists...trying '$fname'"
 	done
 	fname="$fname".patch

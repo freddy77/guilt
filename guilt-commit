@@ -23,7 +23,7 @@ case "$1" in
 		[ "$2" -eq 0 ] && exit 0
 
 		pat_commit="1,$2p"
-		pat_keep="`expr "$2" + 1`,\$p"
+		pat_keep="$(( $2 + 1 )),\$p"
 		;;
 	*)
 		usage

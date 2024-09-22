@@ -581,7 +581,7 @@ pop_many_patches()
 		git reset --hard "$1" > /dev/null
 
 		n=`wc -l < "$applied"`
-		n=`expr $n - $2`
+		n=$(( n - $2 ))
 		head_n "$n" < "$applied" > "$applied.tmp"
 		mv "$applied.tmp" "$applied"
 		if [ -z "`get_top 2>/dev/null`" ] && [ "`git symbolic-ref HEAD`" = "refs/heads/$GUILT_PREFIX$branch" ] && ! $old_style_prefix
@@ -654,7 +654,7 @@ commit()
 		# `git log -1 --pretty=%ct` doesn't work on Git 1.5.x
 		ct=`git cat-file commit HEAD | awk '/^committer /{ print $(NF-1); exit; }'`
 		if [ $ct -gt `last_modified "$p"` ]; then
-			ct=`expr $ct + 60`
+			ct=$(( ct + 60 ))
 			if [ $ct -gt `date +%s` ]; then
 				touch "$p"
 			else
@@ -837,13 +837,13 @@ __refresh_patch()
 		commit "$pname" "HEAD~$3"
 
 		# drop folded patches
-		N=`expr "$3" - 1`
+		N=$(( $3 - 1 ))
 
 		# remove the patches refs
 		tail -n $N < "$applied" | remove_patch_refs
 
 		n=`wc -l < "$applied"`
-		n=`expr $n - $N`
+		n=$(( n - N ))
 		head_n "$n" < "$applied" > "$applied.tmp"
 		mv "$applied.tmp" "$applied"
 	)

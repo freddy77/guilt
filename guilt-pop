@@ -73,7 +73,7 @@ elif [ ! -z "$num" ]; then
 	[ "$patch" -lt 0 ] && die "Invalid number of patches to pop."
 
 	sidx=`wc -l < "$applied"`
-	eidx=`expr $sidx - $patch`
+	eidx=$(( sidx - patch ))
 
 	# catch underflow
 	[ $eidx -lt 0 ] && eidx=0
@@ -87,8 +87,8 @@ else
 		die "Patch $patch is not in the series/is not applied"
 	fi
 
-	eidx=`expr $eidx - 1`
-	sidx=`wc -l < "$applied"`
+	eidx=$(( eidx - 1 ))
+	sidx=$(wc -l < "$applied")
 fi
 
 # make sure that there are no unapplied changes
@@ -101,7 +101,7 @@ fi
 
 l=`awk "BEGIN{n=0}(n==$eidx){print \\$0; exit}{n=n+1}END{}" < "$applied"`
 
-pop_many_patches `git rev-parse refs/patches/$branch/$l^` `expr $sidx - $eidx`
+pop_many_patches `git rev-parse refs/patches/$branch/$l^` $(( sidx - eidx ))
 
 p=`get_top`
 [ ! -z "$p" ] && disp "Now at $p." || disp "All patches popped."

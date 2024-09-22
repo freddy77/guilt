@@ -79,7 +79,7 @@ elif [ ! -z "$num" ]; then
 
 	# calculate end index from current
 	tidx=`wc -l < "$applied"`
-	tidx=`expr $tidx + $patch`
+	tidx=$(( tidx + patch ))
 
 	# clamp to minimum
 	[ $tidx -lt $eidx ] && eidx=$tidx
@@ -101,7 +101,7 @@ fi
 
 # now, find the starting patch
 sidx=`wc -l < "$applied"`
-sidx=`expr $sidx + 1`
+sidx=$(( sidx + 1 ))
 
 # do we actually have to push anything?
 if [ "$sidx" -gt "$eidx" ]; then
