@@ -447,7 +447,7 @@ BEGIN{body=0; subj=0}
 /^Subject:/ && (body == 0 && subj == 0){subj=1; print substr($0, 10) "\n"; next}
 /^(Subject:|Author:|Date:|commit)/ && (body == 0){next}
 /^From:/ {body=0; next}
-/^(Commit-ID:|Gitweb:|AuthorDate:|Committer:CommitDate:)/ && (body == 0){next}
+/^(Commit-ID:|Gitweb:|AuthorDate:|Committer:|CommitDate:)/ && (body == 0){next}
 /^[ \t\f\n\r\v]*$/ && (body==0){next}
 /^.*$/ && (body==0){body=1}
 /^(diff |---$|--- )/{exit}
