@@ -10,6 +10,13 @@ line 2
 line 3
 
 
+author_date_str is "Thu, 15 Aug 2024 10:51:32 +0100"
+author_str is "John Doe <john.doe@example.com>"
+ct is "12345678"
+GIT_AUTHOR_DATE is "Thu, 15 Aug 2024 10:51:32 +0100"
+GIT_AUTHOR_EMAIL is "<john.doe@example.com>"
+GIT_AUTHOR_NAME is "John Doe"
+GIT_COMMITTER_DATE is "2024-09-22 19:08:51 +0000"
 ----------
 Subject message
 
@@ -18,10 +25,24 @@ line 2
 
 line 3
  
+author_date_str is ""
+author_str is ""
+ct is "12345678"
+GIT_AUTHOR_DATE is "2024-09-22 19:08:51 +0000"
+GIT_AUTHOR_EMAIL is "author@email"
+GIT_AUTHOR_NAME is "Author Name"
+GIT_COMMITTER_DATE is "2024-09-22 19:08:51 +0000"
 ----------
 [PATCH] Pretty long subjects line
 
  second
 
 line 1
+author_date_str is "Wed, 8 Nov 2018 09:31:17 +0000"
+author_str is "John Doe <john.doe@example.com>"
+ct is "12345678"
+GIT_AUTHOR_DATE is "Wed, 8 Nov 2018 09:31:17 +0000"
+GIT_AUTHOR_EMAIL is "<john.doe@example.com>"
+GIT_AUTHOR_NAME is "John Doe"
+GIT_COMMITTER_DATE is "2024-09-22 19:08:51 +0000"
 All tests passed!
