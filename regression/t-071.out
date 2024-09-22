@@ -1,0 +1,28 @@
+% setup_git_repo
+% guilt init
+----------
+[PATCH] Pretty long subjects line
+
+second
+
+line 1
+line 2
+line 3
+
+
+----------
+Subject message
+
+line 1
+line 2
+
+line 3
+ 
+----------
+From f572d396fae9206628714fb2ce00f72e94f2258f Mon Sep 17 00:00:00 2001
+[PATCH] Pretty long subjects line
+
+ second
+
+line 1
+All tests passed!

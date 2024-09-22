@@ -1,0 +1,58 @@
+#!/bin/sh
+
+check()
+{
+	cat > patch
+	echo "----------"
+	do_get_header patch
+}
+
+_main()
+{
+check <<"EOF"
+From: John Doe <john.doe@example.com>
+Date: Thu, 15 Aug 2024 10:51:32 +0100
+Subject: [PATCH] Pretty long subjects line
+second
+
+line 1
+line 2
+line 3
+
+
+diff --git a/xyz b/xyz
+index 34697ba58..0e2d8365b 100644
+--- a/xyz
++++ b/xyz
+EOF
+
+check <<"EOF"
+Subject message
+
+line 1
+line 2
+
+line 3
+ 
+diff --git a/abc b/abc
+EOF
+
+check <<"EOF"
+From f572d396fae9206628714fb2ce00f72e94f2258f Mon Sep 17 00:00:00 2001
+From: John Doe <john.doe@example.com>
+Date: Wed, 7 Nov 2018 09:31:17 +0000
+Commit-ID: ignore
+Gitweb: ignore
+AuthorDate: Wed, 8 Nov 2018 09:31:17 +0000
+Committer: ignore
+CommitDate: Wed, 9 Nov 2018 09:31:17 +0000
+Subject: [PATCH] Pretty long subjects line
+ second
+
+line 1
+EOF
+
+rm -f patch
+
+echo "All tests passed!"
+}
