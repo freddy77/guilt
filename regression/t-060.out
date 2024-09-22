@@ -54,7 +54,7 @@ mode
 % dd if=/dev/zero of=file.bin bs=1 count=1024
 1024+0 records in
 1024+0 records out
-1024 bytes (1.0 kB) copied
+1024 bytes copied
 % guilt files
 def
 % guilt files -v
