@@ -1,10 +1,53 @@
 #!/bin/sh
 
+patch_file=".git/patches/master/patch"
+override=false
+orig_git=$(which git)
+
 check()
 {
-	cat > patch
+	cat > "$patch_file"
+	touch_date 1727032131 "$patch_file"
 	echo "----------"
-	do_get_header patch
+	do_get_header "$patch_file"
+
+	override=true
+	commit patch
+	override=false
+}
+
+git()
+{
+	if ! $override; then
+		$orig_git "$@"
+		return $?
+	fi
+
+	case "$1" in
+	rev-parse)
+		echo "$PWD"
+		;;
+	diff-files)
+		;;
+	cat-file)
+		echo "committer 12345678 5"
+		;;
+	write-tree)
+		# just one hash
+		echo "f1d2d2f924e986ac86fdf7b36c94bcdf32beec15"
+		;;
+	commit-tree)
+		exit 0
+		;;
+	update-ref)
+		rm -f "$TMP_MSG"
+		for arg in author_date_str author_str ct GIT_AUTHOR_DATE GIT_AUTHOR_EMAIL GIT_AUTHOR_NAME GIT_COMMITTER_DATE; do
+			echo "$arg is \"$(eval "echo \$$arg")\""
+		done
+		override=false
+		exit 0
+		;;
+	esac
 }
 
 _main()
@@ -52,7 +95,7 @@ Subject: [PATCH] Pretty long subjects line
 line 1
 EOF
 
-rm -f patch
+rm -f "$patch_file"
 
 echo "All tests passed!"
 }
