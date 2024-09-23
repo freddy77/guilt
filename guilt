@@ -647,9 +647,34 @@ commit()
 		# extract author and date lines from the patch header, and set
 		# GIT_AUTHOR_{NAME,EMAIL,DATE}
 		# prefering Author/AuthorDate lines if available.
-		author_str=`sed -n -e '/^Author:/ { s/^Author: //; p; q; }; /^(diff |---$|--- )/ q' "$p"`
+		author_str=
+		author_str2=
+		author_date_str=
+		author_date_str2=
+		while IFS= read -r line; do
+			case "$line" in
+			"Author: "*)
+				author_str="${line#Author: }"
+				;;
+			"From: "*)
+				author_str2="${line#From: }"
+				;;
+			"AuthorDate: "*)
+				author_date_str="${line#AuthorDate: }"
+				;;
+			"Date: "*)
+				author_date_str2="${line#Date: }"
+				;;
+			"diff "*|"---"|"--- "*)
+				break
+				;;
+			esac
+		done < "$p"
+		: "${author_str:=$author_str2}"
+		: "${author_date_str:=$author_date_str2}"
+		unset author_str2 author_date_str2
 		if [ -z "$author_str" ]; then
-			author_str=`sed -n -e '/^From:/ { s/^From: //; p; q; }; /^(diff |---$|--- )/ q' "$p"`
+			author_date_str=
 		fi
 
 		if [ ! -z "$author_str" ]; then
@@ -659,10 +684,6 @@ EOF
 			export GIT_AUTHOR_NAME="${GIT_AUTHOR_NAME:-" "}"
 			export GIT_AUTHOR_EMAIL="<${author_str#*<}"
 
-			author_date_str=`sed -n -e '/^AuthorDate:/ { s/^AuthorDate: //; p; q; }; /^(diff |---$|--- )/ q' "$p"`
-			if [ -z "$author_date_str" ]; then
-				author_date_str=`sed -n -e '/^Date:/ { s/^Date: //; p; q; }; /^(diff |---$|--- )/ q' "$p"`
-			fi
 			if [ ! -z "$author_date_str" ]; then
 				export GIT_AUTHOR_DATE="$author_date_str"
 			fi
