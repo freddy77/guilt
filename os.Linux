@@ -55,3 +55,9 @@ _seq()
 	seq -- "$@"
 	return $?
 }
+
+# usage: file_size <file>
+file_size()
+{
+	stat -c "%s" "$1"
+}

@@ -68,3 +68,9 @@ _seq()
 	)
 	return 0
 }
+
+# usage: file_size <file>
+file_size()
+{
+	stat -f "%z" "$1"
+}

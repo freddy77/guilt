@@ -55,3 +55,12 @@ _seq()
 	seq "$@"
 	return $?
 }
+
+# usage: file_size <file>
+file_size()
+{
+	x=$(wc -c < "$1") && {
+		set -- $x
+		echo "$1"
+	}
+}
