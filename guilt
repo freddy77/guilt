@@ -641,6 +641,20 @@ remove_ref()
 	git update-ref -d "$1" "$r"
 }
 
+get_field()
+{
+	while IFS= read -r line; do
+		case "$line" in
+		"$1"*)
+			echo "${line#$1}"
+			;;
+		"diff "*|"---"|"--- "*)
+			return 0
+			;;
+		esac
+	done < "$2"
+}
+
 # usage: commit patchname parent
 commit()
 {
@@ -663,9 +677,9 @@ commit()
 		# extract author and date lines from the patch header, and set
 		# GIT_AUTHOR_{NAME,EMAIL,DATE}
 		# prefering Author/AuthorDate lines if available.
-		author_str=`sed -n -e '/^Author:/ { s/^Author: //; p; q; }; /^(diff |---$|--- )/ q' "$p"`
+		author_str=$(get_field "Author: " "$p")
 		if [ -z "$author_str" ]; then
-			author_str=`sed -n -e '/^From:/ { s/^From: //; p; q; }; /^(diff |---$|--- )/ q' "$p"`
+			author_str=$(get_field "From: " "$p")
 		fi
 
 		if [ ! -z "$author_str" ]; then
@@ -675,9 +689,9 @@ EOF
 			export GIT_AUTHOR_NAME="${GIT_AUTHOR_NAME:-" "}"
 			export GIT_AUTHOR_EMAIL="<${author_str#*<}"
 
-			author_date_str=`sed -n -e '/^AuthorDate:/ { s/^AuthorDate: //; p; q; }; /^(diff |---$|--- )/ q' "$p"`
+			author_date_str=$(get_field "AuthorDate: " "$p")
 			if [ -z "$author_date_str" ]; then
-				author_date_str=`sed -n -e '/^Date:/ { s/^Date: //; p; q; }; /^(diff |---$|--- )/ q' "$p"`
+				author_date_str=$(get_field "Date: " "$p")
 			fi
 			if [ ! -z "$author_date_str" ]; then
 				export GIT_AUTHOR_DATE="$author_date_str"
