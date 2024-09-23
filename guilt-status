@@ -87,7 +87,7 @@ fi
 git rev-parse --verify HEAD >/dev/null 2>&1 || IS_INITIAL=t
 
 (
-	cd_to_toplevel
+	cd_to_toplevel_cached
 	# untracked; FIXME: there's got to be a better way
 	if [ ! -z "$untracked" ]; then
 		if [ -f "$GIT_DIR/info/exclude" ]; then

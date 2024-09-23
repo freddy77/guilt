@@ -67,6 +67,12 @@ silent()
 	"$@" >/dev/null 2>/dev/null
 }
 
+toplevel=$(git rev-parse --show-toplevel)
+cd_to_toplevel_cached()
+{
+	cd "$toplevel" >/dev/null 2>&1 || cd_to_toplevel
+}
+
 ########
 
 GUILT_PATH="$(dirname "$0")"
@@ -573,7 +579,7 @@ pop_many_patches()
 	assert_head_check
 
 	(
-		cd_to_toplevel
+		cd_to_toplevel_cached
 
 		# remove the patches refs
 		tail -n $2 < "$applied" | remove_patch_refs
@@ -619,7 +625,7 @@ commit()
 
 		p="$GUILT_DIR/$branch/$1"
 		pname="$1"
-		cd_to_toplevel
+		cd_to_toplevel_cached
 
 		git diff-files --no-ext-diff --name-only | while read n; do git update-index "$n" ; done
 
@@ -701,7 +707,7 @@ push_patch()
 		reject="--reject"
 
 		assert_head_check
-		cd_to_toplevel
+		cd_to_toplevel_cached
 
 		# apply the patch if and only if there is something to apply
 		if grep -q -e "^diff " -e "^--- " "$p"; then
@@ -809,7 +815,7 @@ __refresh_patch()
 	(
 		TMP_DIFF=`get_tmp_file diff`
 
-		cd_to_toplevel
+		cd_to_toplevel_cached
 		p="$GUILT_DIR/$branch/$1"
 		pname="$1"
 
