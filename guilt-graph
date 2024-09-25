@@ -13,7 +13,9 @@ _main() {
 
 cache="$GUILT_DIR/$branch/.graphcache.$$"
 xclude="$GUILT_DIR/$branch/.graphexclude.$$"
-trap "rm -rf \"$cache\" \"$xclude\"" 0
+cleanup() {
+	rm -rf "$cache" "$xclude"
+}
 mkdir "$cache"
 >"$xclude"
 

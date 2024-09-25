@@ -38,6 +38,7 @@ if [ -z "$TOP" ]; then
 	die "No patches applied; try guilt push first"
 fi
 
+create_tmpdir
 refresh_patch "$TOP" "$gdiff" "$dstat"
 echo "Patch $TOP refreshed"
 

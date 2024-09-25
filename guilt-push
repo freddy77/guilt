@@ -117,6 +117,7 @@ if [ "$sidx" -gt "$eidx" ]; then
 	fi
 fi
 
+create_tmpdir
 get_series | sed -n -e "${sidx},${eidx}p" | while read p
 do
 	disp "Applying patch..$p"
