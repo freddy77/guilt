@@ -41,6 +41,7 @@ if [ ! -z "$pline" ]; then
 	die "Patch is applied. Pop the patch first."
 fi
 
+create_tmpdir
 fold_patch "$patch"
 
 # back it up just in case :)

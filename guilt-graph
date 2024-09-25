@@ -11,10 +11,9 @@ fi
 
 _main() {
 
-cache="$GUILT_DIR/$branch/.graphcache.$$"
-xclude="$GUILT_DIR/$branch/.graphexclude.$$"
-trap "rm -rf \"$cache\" \"$xclude\"" 0
-mkdir "$cache"
+create_tmpdir
+cache="$tmpdir"
+xclude="$tmpdir/exclude"
 # avoid empty file which causes different behaviour in SunOS
 echo '^$' > "$xclude"
 

@@ -20,7 +20,9 @@ if [ -e "$target_dir" ]; then
 	die "Specified directory already exists"
 fi
 
-trap "rm -rf \"$target_dir\"" 0
+cleanup() {
+	rm -rf "$target_dir"
+}
 mkdir -p "$target_dir"
 
 get_full_series | tee "$target_dir/series" | while read p; do
@@ -28,7 +30,7 @@ get_full_series | tee "$target_dir/series" | while read p; do
 	cp "$GUILT_DIR/$branch/$p" "$target_dir/$p"
 done
 
-trap - 0
+cleanup() { :; }
 disp "Series exported to \"$target_dir\" successfully."
 
 }

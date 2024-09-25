@@ -27,6 +27,26 @@ SUBDIRECTORY_OK=1
 
 . "$(git --exec-path)/git-sh-setup"
 
+tmpdir=
+cleanup() { :; }
+main_cleanup()
+{
+	res=$?
+	cleanup
+	if [ -n "$tmpdir" ]; then
+		rm -rf "$tmpdir"
+	fi
+	return $res
+}
+trap main_cleanup 0
+
+create_tmpdir()
+{
+	if [ -z "$tmpdir" ]; then
+		tmpdir=$(get_tmp_file tmpdir -d)
+	fi
+}
+
 #
 # Shell library
 #
@@ -629,8 +649,9 @@ remove_ref()
 # usage: commit patchname parent
 commit()
 {
+	create_tmpdir
 	(
-		TMP_MSG=`get_tmp_file msg`
+		TMP_MSG="$tmpdir/msg"
 
 		p="$GUILT_DIR/$branch/$1"
 		pname="$1"
@@ -720,8 +741,6 @@ EOF
 
 		# mark patch as applied
 		git update-ref "refs/patches/$branch/$pname" HEAD
-
-		rm -f "$TMP_MSG"
 	)
 }
 
@@ -731,7 +750,7 @@ push_patch()
 	__push_patch_bail=0
 
 	(
-		TMP_LOG=`get_tmp_file log`
+		TMP_LOG="$tmpdir/log"
 
 		p="$GUILT_DIR/$branch/$1"
 		pname="$1"
@@ -753,7 +772,6 @@ push_patch()
 			if [ $__push_patch_bail -ne 0 ]; then
 				cat "$TMP_LOG" >&2
 				if [ "$bail_action" = "abort" ]; then
-					rm -f "$TMP_LOG" "$TMP_MSG"
 					return $__push_patch_bail
 				fi
 			fi
@@ -763,8 +781,6 @@ push_patch()
 			commit "$pname" HEAD
 
 		echo "$pname" >> "$applied"
-
-		rm -f "$TMP_LOG"
 	)
 
 	# sub-shell funky-ness
