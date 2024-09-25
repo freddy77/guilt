@@ -677,9 +677,36 @@ commit()
 		# extract author and date lines from the patch header, and set
 		# GIT_AUTHOR_{NAME,EMAIL,DATE}
 		# prefering Author/AuthorDate lines if available.
-		author_str=$(get_field "Author: " "$p")
+		author_str=
+		author_str2=
+		author_date_str=
+		author_date_str2=
+		n=1
+		while IFS= read -r line; do
+			case "$line" in
+			"Author: "*)
+				author_str="${line#Author: }"
+				;;
+			"From: "*)
+				author_str2="${line#From: }"
+				;;
+			"AuthorDate: "*)
+				author_date_str="${line#AuthorDate: }"
+				;;
+			"Date: "*)
+				author_date_str2="${line#Date: }"
+				;;
+			"diff "*|"---"|"--- "*)
+				break
+				;;
+			esac
+			n=$(( n + 1 ))
+		done < "$p"
+		: "${author_str:=$author_str2}"
+		: "${author_date_str:=$author_date_str2}"
+		unset author_str2 author_date_str2
 		if [ -z "$author_str" ]; then
-			author_str=$(get_field "From: " "$p")
+			author_date_str=
 		fi
 
 		if [ ! -z "$author_str" ]; then
@@ -689,10 +716,6 @@ EOF
 			export GIT_AUTHOR_NAME="${GIT_AUTHOR_NAME:-" "}"
 			export GIT_AUTHOR_EMAIL="<${author_str#*<}"
 
-			author_date_str=$(get_field "AuthorDate: " "$p")
-			if [ -z "$author_date_str" ]; then
-				author_date_str=$(get_field "Date: " "$p")
-			fi
 			if [ ! -z "$author_date_str" ]; then
 				export GIT_AUTHOR_DATE="$author_date_str"
 			fi
@@ -732,6 +755,83 @@ EOF
 	)
 }
 
+is_mbox()
+{
+	{
+		IFS= read line
+		case "$line" in
+		"From "*" Mon Sep 17 00:00:00 2001")
+			;;
+		*)
+			return 1
+			;;
+		esac
+		IFS= read line
+		case "$line" in
+		"From: "*)
+			author_str="${line#From: }"
+			;;
+		*)
+			return 1
+			;;
+		esac
+
+		author_date_str=
+		author_date_str2=
+		n=1
+		while IFS= read -r line; do
+			case "$line" in
+			"From: "*)
+				author_str="${line#From: }"
+				;;
+			"AuthorDate: "*)
+				author_date_str="${line#AuthorDate: }"
+				;;
+			"Date: "*)
+				author_date_str2="${line#Date: }"
+				;;
+			"diff "*|"---"|"--- "*)
+				break
+				;;
+			esac
+			n=$(( n + 1 ))
+		done
+		unset author_date_str2
+	} < "$1"
+
+		if [ ! -z "$author_str" ]; then
+			read GIT_AUTHOR_NAME <<EOF
+${author_str%%<*}
+EOF
+			export GIT_AUTHOR_NAME="${GIT_AUTHOR_NAME:-" "}"
+			export GIT_AUTHOR_EMAIL="<${author_str#*<}"
+
+			if [ ! -z "$author_date_str" ]; then
+				export GIT_AUTHOR_DATE="$author_date_str"
+			fi
+		fi
+
+		# `git log -1 --pretty=%ct` doesn't work on Git 1.5.x
+		ct=`git cat-file commit HEAD | awk '/^committer /{ print $(NF-1); exit; }'`
+		if [ $ct -gt `last_modified "$1"` ]; then
+			ct=$(( ct + 60 ))
+			if [ $ct -gt `date +%s` ]; then
+				touch "$1"
+			else
+				touch_date $ct "$1"
+			fi
+		fi
+
+		export GIT_COMMITTER_DATE="`format_last_modified "$1"`"
+
+		# export GIT_AUTHOR_DATE only if a Date line was unavailable
+		if [ -z "$author_date_str" ]; then
+			export GIT_AUTHOR_DATE="$GIT_COMMITTER_DATE"
+		fi
+
+	return 0
+}
+
 # usage: push_patch patchname [bail_action]
 push_patch()
 {
@@ -747,6 +847,17 @@ push_patch()
 
 		assert_head_check
 		cd_to_toplevel_cached
+
+		# quick, use git am
+		if is_mbox "$p"; then
+			if git -c "core.hooksPath=$tmpdir" am $guilt_push_diff_context -q "$p" >/dev/null 2>&1; then
+				# mark patch as applied
+				git update-ref "refs/patches/$branch/$pname" HEAD
+				echo "$pname" >> "$applied"
+				return 0
+			fi
+			gm am --abort >/dev/null 2>&1
+		fi
 
 		# apply the patch if and only if there is something to apply
 		if grep -q -e "^diff " -e "^--- " "$p"; then
