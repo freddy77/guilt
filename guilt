@@ -451,6 +451,7 @@ do_get_header()
 	awk '
 BEGIN{body=0; subj=0}
 /^Subject:/ && (body == 0 && subj == 0){subj=1; print substr($0, 10) "\n"; next}
+(NR==1) && /^From .* Mon Sep 17 00:00:00 2001/{next}
 /^(Subject:|Author:|Date:|commit)/ && (body == 0){next}
 /^From:/ {body=0; next}
 /^(Commit-ID:|Gitweb:|AuthorDate:|Committer:|CommitDate:)/ && (body == 0){next}
