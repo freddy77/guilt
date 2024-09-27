@@ -410,36 +410,6 @@ if ($1 == pname) {
 	)
 }
 
-# usage: do_make_header <hash>
-do_make_header()
-{
-	# we should try to work with commit objects only
-	if [ `git cat-file -t "$1"` != "commit" ]; then
-		disp "Hash $1 is not a commit object" >&2
-		disp "Aborting..." >&2
-		exit 2
-	fi
-
-	git cat-file -p "$1" | awk '
-		BEGIN{headers=1; firstline=1}
-		/^author / && headers {
-			sub(/^author +/, "");
-			authordate=strftime("%c", $(NF -1)) " " $NF;
-			sub(/ [0-9]* [+-]*[0-9][0-9]*$/, "");
-			author=$0
-		}
-		!headers {
-			print
-			if (firstline) {
-				firstline = 0;
-				print "\nFrom: " author;
-				print "Date: " authordate;
-			}
-		}
-		/^$/ && headers { headers = 0 }
-	'
-}
-
 # usage: do_get_patch patchfile
 do_get_patch()
 {

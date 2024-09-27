@@ -77,11 +77,17 @@ for rev in `git rev-list $rhash`; do
 	done
 	fname="$fname".patch
 
-	(
-		do_make_header $rev
-		echo ""
-		git diff --no-ext-diff --binary $rev^..$rev
-	) > "$GUILT_DIR/$branch/$fname"
+	# Use git format-patch to generate the new path.
+	# We strip first "From ..." line for compatibility with older guilt
+	# versions which threat this line as part of message.
+	git format-patch --no-ext-diff --binary --keep-subject --no-signature\
+		 --no-stat --stdout "$rev^..$rev" -- | awk '
+BEGIN {
+	getline;
+	if(!/^From /) { print }
+}
+{ print }
+' > "$GUILT_DIR/$branch/$fname"
 
 	# FIXME: grab the GIT_AUTHOR_DATE from the commit object and set the
 	# timestamp on the patch
