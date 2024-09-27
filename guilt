@@ -47,6 +47,9 @@ create_tmpdir()
 	fi
 }
 
+# Detect if GNU awk is present
+[ "$(gawk "BEGIN{ print \"check\"}" 2>/dev/null)" = "check" ] && alias awk=gawk
+
 #
 # Shell library
 #
