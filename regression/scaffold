@@ -47,7 +47,7 @@ function replace_path
 function filter_dd
 {
 	sed -e 's:^\([0-9]*\) bytes (\([0-9]*\.[0-9]* *.B\).*) copied.*$:\1 bytes copied:' \
-		-e 's:^\([0-9]*\) bytes transferred.*$:\1 bytes copied:'
+		-e 's:^\([0-9]*\) bytes .*transferred.*$:\1 bytes copied:'
 }
 
 # usage: cmd <cmd>..
