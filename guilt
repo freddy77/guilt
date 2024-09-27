@@ -521,7 +521,10 @@ series_insert_patch()
 # usage: series_remove_patch <patchname>
 series_remove_patch()
 {
-	grep -v "^$1\([[:space:]].*\)\?$" < "$series" > "$series.tmp"
+	awk -v pname="$1" "$awk_patch"'
+{
+	if (patch($0) != pname) { print }
+}' < "$series" > "$series.tmp"
 	mv "$series.tmp" "$series"
 }
 
