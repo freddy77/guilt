@@ -269,9 +269,9 @@ BEGIN {
 {
 	p = patch($0);
 	if (length(p)) {
-		okay = 1
-		split(substr($0, end), list);
-		for(i=1; i<=length(list); i++) {
+		okay = 1;
+		len = split(substr($0, end), list);
+		for(i=1; i<=len; i++) {
 			g = list[i];
 			start = substr(g, 1, 2);
 			if ((start == "#+" && guards[substr(g, 3)] == "") || (start == "#-" && guards[substr(g, 3)] != "")) {
@@ -315,8 +315,8 @@ get_guards()
 	if (patch($0) == pname) {
 		guards = "";
 		sep = "";
-		split(substr($0, end), list);
-		for(i=1; i<=length(list); i++) {
+		len = split(substr($0, end), list);
+		for(i=1; i<=len; i++) {
 			g = list[i];
 			if (match(g, /^#[+-]/)) {
 				guards = guards sep substr(g, 2);
