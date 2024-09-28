@@ -387,6 +387,7 @@ unset_guards()
 		p="$1"
 		shift
 		for x in "$@"; do
+# XXX use macro and function
 			awk -v pname="$p" -v oldguard="$x" '{
 if ($1 == pname) {
 	guards = "";
