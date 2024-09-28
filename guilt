@@ -511,10 +511,10 @@ head_check()
 series_insert_patch()
 {
 	awk -v top="`get_top`" -v new="$1" \
-		'BEGIN{if (top == "") print new;}
+		"$awk_patch"'BEGIN{if (top == "") print new;}
 		{
 			print $0;
-			if (top != "" && top == $0) print new;
+			if (top != "" && top == patch($0)) print new;
 		}' "$series" > "$series.tmp"
 	mv "$series.tmp" "$series"
 }

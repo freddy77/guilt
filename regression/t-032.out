@@ -1,4 +1,15 @@
 % setup_repo
+% grep  mode  .git/patches/master/series
+  mode # comment
+% guilt push --all
+Applying patch..modify
+Patch applied.
+Applying patch..add
+Patch applied.
+Applying patch..remove
+Patch applied.
+Applying patch..mode
+Patch applied.
 % touch foo foo:baz
 % guilt import -P foo:bar foo
 The specified patch name is invalid according to git-check-ref-format(1).
@@ -7,10 +18,31 @@ Specified file does not exist.
 % guilt import -P foo foo2
 Specified file does not exist.
 % guilt import -P foo3 foo
+% guilt series
+modify
+add
+remove
+mode
+foo3
 % guilt import -P foo3 foo
 Already tracking a patch under that name.
 % guilt import -P foo2 foo
+% guilt series
+modify
+add
+remove
+mode
+foo2
+foo3
 % guilt import foo
+% guilt series
+modify
+add
+remove
+mode
+foo
+foo2
+foo3
 % guilt import foo
 Already tracking a patch under that name.
 % guilt import -P foo,bar foo
