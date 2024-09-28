@@ -34,13 +34,15 @@ remove
 mode
 foo2
 foo3
+% guilt pop -a
+All patches popped.
 % guilt import foo
 % guilt series
+foo
 modify
 add
 remove
 mode
-foo
 foo2
 foo3
 % guilt import foo

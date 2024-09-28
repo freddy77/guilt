@@ -41,6 +41,9 @@ cmd guilt import -P foo2 foo
 # this should contain foo2
 cmd guilt series
 
+# pop all patches to check importing with an empty queue
+cmd guilt pop -a
+
 # ok
 cmd guilt import foo
 
