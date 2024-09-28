@@ -533,10 +533,10 @@ series_remove_patch()
 series_rename_patch()
 {
 	# Rename the patch, but preserve comments on the line
-	awk -v old="$1" -v new="$2" '
+	awk -v old="$1" -v new="$2" "$awk_patch"'
 {
-	if (index($0, old) == 1)
-		print new substr($0, length(old) + 1);
+	if (patch($0) == old)
+		print substr($0, 1, start - 1) new substr($0, end);
 	else
 		print $0;
 }' "$series" > "$series.tmp"
