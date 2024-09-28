@@ -544,7 +544,7 @@ series_rename_patch()
 	mv "$series.tmp" "$series"
 }
 
-# usage: series_rename_patch <oldpatchname> <newpatchname>
+# usage: ref_rename_patch <oldpatchname> <newpatchname>
 ref_rename_patch()
 {
 	git update-ref "refs/patches/$branch/$2" `git rev-parse "refs/patches/$branch/$1"`
