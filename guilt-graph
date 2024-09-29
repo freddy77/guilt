@@ -15,7 +15,8 @@ cache="$GUILT_DIR/$branch/.graphcache.$$"
 xclude="$GUILT_DIR/$branch/.graphexclude.$$"
 trap "rm -rf \"$cache\" \"$xclude\"" 0
 mkdir "$cache"
->"$xclude"
+# avoid empty file which causes different behaviour in SunOS
+echo '^$' > "$xclude"
 
 while [ $# -gt 0 ]; do
 	if [ "$1" = "-x" ] && [ $# -ge 2 ]; then
