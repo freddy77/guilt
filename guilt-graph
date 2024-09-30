@@ -18,14 +18,13 @@ mkdir "$cache"
 # avoid empty file which causes different behaviour in SunOS
 echo '^$' > "$xclude"
 
-while [ $# -gt 0 ]; do
-	if [ "$1" = "-x" ] && [ $# -ge 2 ]; then
-		echo "$2" >> "$xclude"
-		shift
-		shift
-	else
+while [ $# -ge 2 ]; do
+	if [ "$1" != "-x" ]; then
 		break
 	fi
+	echo "$2" >> "$xclude"
+	shift
+	shift
 done
 
 if [ $# -gt 1 ]; then
