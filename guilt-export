@@ -29,6 +29,6 @@ get_full_series | tee "$target_dir/series" | while read p; do
 done
 
 trap - 0
-disp "Series exported to \"$target_dir\" sucessfully."
+disp "Series exported to \"$target_dir\" successfully."
 
 }
