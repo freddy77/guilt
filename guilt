@@ -334,22 +334,26 @@ set_guards()
 	(
 		p="$1"
 		shift
+		newguard=""
 		for x in "$@"; do
 			case "$x" in
 				[+-]*)
-					awk -v pname="$p" -v newguard="$x" '{
-if ($1 == pname)
-	print $0 " #" newguard;
-else
-	print $0;
-}' < "$series" > "$series.tmp"
-					mv "$series.tmp" "$series"
+					newguard="$newguard #$x"
 					;;
 				*)
 					echo "'$x' is not a valid guard name" >&2
 					;;
 			esac
 		done
+		if [ -n "$newguard" ]; then
+			awk -v pname="$p" -v newguard="$newguard" "$awk_patch"'{
+if (patch($0) == pname)
+	print $0 newguard;
+else
+	print $0;
+}' < "$series" > "$series.tmp"
+			mv "$series.tmp" "$series"
+		fi
 	)
 }
 
