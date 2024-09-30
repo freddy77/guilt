@@ -1,7 +1,7 @@
 # usage: touch_date <unix ts> <file>
 touch_date()
 {
-	touch -d @$1 "$2"
+	touch -t "$(date -r $1 +%Y%m%d%H%M.%S)" "$2"
 }
 
 # usage: last_modified <file>
