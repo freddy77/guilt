@@ -446,12 +446,13 @@ do_get_header()
 	# patchbomb.
 
 	# 1st line prints first encountered Subject line plus empty line.
-	# 2nd line skips standard email/git patch header lines.
-	# 3th line skips "from:" lines throughout the patch description
-	# 4rd line skips tip's additional header lines.
-	# 5th line skips any empty lines thereafter.
-	# 6th line turns off empty line skip upon seeing a non-empty line.
-	# 7th line terminates execution when we encounter the diff
+	# 2nd line skips fake mbox initial line.
+	# 3rd line skips standard email/git patch header lines.
+	# 4th line skips "from:" lines throughout the patch description
+	# 5th line skips tip's additional header lines.
+	# 6th line skips any empty lines thereafter.
+	# 7th line turns off empty line skip upon seeing a non-empty line.
+	# 8th line terminates execution when we encounter the diff
 	awk '
 BEGIN{body=0; subj=0}
 /^Subject:/ && (body == 0 && subj == 0){subj=1; print substr($0, 10) "\n"; next}
@@ -470,8 +471,8 @@ END{}
 # usage: do_get_full_header patchfile
 do_get_full_header()
 {
-	# 2nd line checks for the begining of a patch
-	# 3rd line outputs the line if it didn't get pruned by the above rules
+	# 1st line checks for the beginning of a patch
+	# 2nd line outputs the line if it didn't get pruned by the above rule
 	awk '
 BEGIN{}
 /^(diff |---$|--- )/{exit}
