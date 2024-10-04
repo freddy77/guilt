@@ -628,51 +628,52 @@ remove_ref()
 # Also set properly GIT_COMMITTER_DATE
 parse_header()
 {
-	{
-		# extract author and date lines from the patch header, and set
-		# GIT_AUTHOR_{NAME,EMAIL,DATE}
-		# prefering Author/AuthorDate lines if available.
-		author_str=
-		author_str2=
-		author_date_str=
-		author_date_str2=
-		subject_str=
-		no_git=false
-		while IFS= read -r line; do
-			case "$line" in
-			"Author: "*)
-				no_git=true
-				author_str="${line#Author: }"
-				;;
-			"From: "*)
-				author_str2="${line#From: }"
-				;;
-			"AuthorDate: "*)
-				no_git=true
-				author_date_str="${line#AuthorDate: }"
-				;;
-			"Date: "*)
-				author_date_str2="${line#Date: }"
-				;;
-			"Subject: "*)
-				subject_str="${line#Subject: }"
-				;;
-			"diff "*|"---"|"--- "*)
-				break
-				;;
-			esac
-		done
-		# git am format needs to have From, Date and Subject
-		if [ -z "$author_str2" ] || [ -z "$author_date_str2" ] || [ -z "$subject_str" ]; then
-			no_git=true
-		fi
-		: "${author_str:=$author_str2}"
-		: "${author_date_str:=$author_date_str2}"
-		unset author_str2 author_date_str2 subject_str
-		if [ -z "$author_str" ]; then
-			author_date_str=
-		fi
-	} < "$1"
+	# extract author and date lines from the patch header, and set
+	# GIT_AUTHOR_{NAME,EMAIL,DATE}
+	# prefering Author/AuthorDate lines if available.
+	eval $(awk '
+BEGIN {
+	author_str="";
+	author_str2="";
+	author_date_str="";
+	author_date_str2="";
+	subject_str="";
+	no_git="false";
+}
+function out(name, val) {
+	gsub(/\'\''/,"'\'\''",val);
+	print name "='\''" val "'\''";
+}
+/^(diff |--- |---$)/{exit}
+{
+	i = index($0, ": ");
+	if (i) {
+		a = substr($0, 1, i-1);
+		if (a == "Author") {
+			no_git="true";
+			author_str=substr($0, i+2);
+		} else if (a == "From") {
+			author_str2=substr($0, i+2);
+		} else if (a == "AuthorDate") {
+			no_git="true";
+			author_date_str=substr($0, i+2);
+		} else if (a == "Date") {
+			author_date_str2=substr($0, i+2);
+		} else if (a == "Subject") {
+			subject_str=substr($0, i+2);
+		} 
+	}
+}
+END {
+	if (author_str2 == "" || author_date_str2 == "" || subject_str == "") {no_git="true"}
+	if (author_str == "") {author_str=author_str2}
+	if (author_date_str == "") {author_date_str=author_date_str2}
+	if (author_str == "") {author_date_str=""}
+	out("no_git", no_git);
+	out("author_str", author_str);
+	out("author_date_str", author_date_str);
+}
+' < "$1")
 
 	# `git log -1 --pretty=%ct` doesn't work on Git 1.5.x
 	ct=`git cat-file commit HEAD | awk '/^committer /{ print $(NF-1); exit; }'`
