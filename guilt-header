@@ -90,10 +90,7 @@ else
 	git_editor "$TMP_MSG"
 	mv "$GUILT_DIR/$branch/$patch" "$GUILT_DIR/$branch/$patch~"
 
-	(
-		cat "$TMP_MSG"
-		cat "$TMP_DIFF"
-	) > "$GUILT_DIR/$branch/$patch"
+	cat "$TMP_MSG" "$TMP_DIFF" > "$GUILT_DIR/$branch/$patch"
 fi
 
 rm -f "$TMP_MSG" "$TMP_DIFF"
