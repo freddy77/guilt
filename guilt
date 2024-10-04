@@ -646,7 +646,7 @@ remove_ref()
 	git update-ref -d "$1" "$r"
 }
 
-# usage: commit patchname parent
+# usage: commit patchname parent add_files
 commit()
 {
 	create_tmpdir
@@ -657,7 +657,9 @@ commit()
 		pname="$1"
 		cd_to_toplevel_cached
 
-		git diff-files --no-ext-diff --name-only | while read n; do git update-index "$n" ; done
+		if [ "$3" != false ]; then
+			git diff-files --no-ext-diff --name-only | while read n; do git update-index "$n" ; done
+		fi
 
 		# grab a commit message out of the patch
 		do_get_header "$p" > "$TMP_MSG"
@@ -756,6 +758,7 @@ push_patch()
 		pname="$1"
 		bail_action="$2"
 		reject="--reject"
+		add_files=false
 
 		assert_head_check
 		cd_to_toplevel_cached
@@ -774,11 +777,12 @@ push_patch()
 				if [ "$bail_action" = "abort" ]; then
 					return $__push_patch_bail
 				fi
+				add_files=true
 			fi
 		fi
 
 		GIT_REFLOG_ACTION="$GIT_REFLOG_ACTION: $pname" \
-			commit "$pname" HEAD
+			commit "$pname" HEAD $add_files
 
 		echo "$pname" >> "$applied"
 	)
