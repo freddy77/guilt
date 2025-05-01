@@ -264,12 +264,12 @@ r 22853c81644b0c41d6fb5f372e4186281cf9ecea  .git/refs/patches/master/update-sub
 r 8b121046333c367b81bd566d4b3536ce7cb93bb3  .git/refs/patches/master/add-submodule
 r fad0854bd2915f4b66cab5c08f05ad1ffa40665d  .git/refs/patches/master/use-feature
 r fbae6ca931b4c88f12fb694fbecace54c210ec95  .git/refs/patches/master/local-changes
-% q pop -a
+% guilt pop -a
 Cleared directory 'sub'
 Submodule 'sub' (/tmp/guilt test/test sub.git) unregistered for path 'sub'
 All patches popped.
 % test -d sub
-% q push -a
+% guilt push -a
 Applying patch..add-submodule
 Submodule 'sub' (/tmp/guilt test/test sub.git) registered for path 'sub'
 Submodule path 'sub': checked out 'a7e7183eb4d21bb19f54a6a25cc590843ebf578c'

@@ -190,9 +190,9 @@ cmd guilt push
 cmd list_files
 
 # Pop many patches, including the one that creates the submodule
-cmd q pop -a
+cmd guilt pop -a
 shouldfail test -d sub
 # Push all patches back.
-cmd q push -a
+cmd guilt push -a
 cmd test -d sub
 (cd sub && check_readme abc jkl)
