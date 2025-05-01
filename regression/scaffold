@@ -57,7 +57,7 @@ function filter_dd
 # usage: cmd <cmd>..
 function cmd
 {
-	printf "%% %s\n" "$*"
+	printf "%% %s\n" "$*" | replace_path
 	if ! (
 		exec 3>&1
 		rv=`(("$@" 2>&1; echo $? >&4) | replace_path >&3 ) 4>&1`
@@ -86,7 +86,7 @@ function cmd_silent
 # usage: shouldfail <cmd>..
 function shouldfail
 {
-	printf "%% %s\n" "$*"
+	printf "%% %s\n" "$*" | replace_path
 	if (
 		exec 3>&1
 		rv=`(("$@" 2>&1; echo $? >&4) | replace_path >&3 ) 4>&1`
