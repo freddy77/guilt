@@ -4,6 +4,7 @@ INSTALL?=install
 
 OSFILES = $(filter-out $(wildcard *~),$(wildcard os.*))
 SCRIPTS = $(filter-out $(wildcard *~),$(wildcard guilt-*))
+PYFILES = extract-submodule.py
 
 .PHONY: all 
 all:
@@ -16,12 +17,13 @@ install:
 	$(INSTALL) -m 755 guilt "$(DESTDIR)$(PREFIX)/bin/"
 	$(INSTALL) -d "$(DESTDIR)$(PREFIX)/lib/guilt/"
 	$(INSTALL) -m 755 $(SCRIPTS) "$(DESTDIR)$(PREFIX)/lib/guilt/"
+	$(INSTALL) -m 755 $(PYFILES) "$(DESTDIR)$(PREFIX)/lib/guilt/"
 	$(INSTALL) -m 644 $(OSFILES) "$(DESTDIR)$(PREFIX)/lib/guilt/"
 
 .PHONY: uninstall
 uninstall:
 	./uninstall "$(DESTDIR)$(PREFIX)/bin/" guilt
-	./uninstall "$(DESTDIR)$(PREFIX)/lib/guilt/" $(SCRIPTS) $(OSFILES)
+	./uninstall "$(DESTDIR)$(PREFIX)/lib/guilt/" $(SCRIPTS) $(OSFILES) $(PYFILES)
 	-rmdir -p "$(DESTDIR)$(PREFIX)/lib/guilt/"
 	-rmdir -p "$(DESTDIR)$(PREFIX)/bin/"
 
