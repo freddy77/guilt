@@ -196,3 +196,21 @@ shouldfail test -d sub
 cmd guilt push -a
 cmd test -d sub
 (cd sub && check_readme abc jkl)
+
+# Add a binary file and a change to the submodule, and check that we
+# can push and pop the patch.
+cmd guilt new binary
+echo hello > somebinary
+echo somebinary -diff > .gitattributes
+(cd sub && cmd git checkout trunk)
+(cd sub && check_readme abc def ghi)
+cmd git add somebinary .gitattributes
+cmd guilt ref
+cmd guilt pop
+fixup_time_info binary
+(cd sub && check_readme abc jkl)
+shouldfail cat somebinary
+cmd guilt push
+(cd sub && check_readme abc def ghi)
+cmd list_files
+cmd cat somebinary

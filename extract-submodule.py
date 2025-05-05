@@ -165,6 +165,18 @@ class ToLine(FileHeader):
 
 class FileData(LineType): pass
 
+class GitBinaryPatchHeader(FileData):
+    RE = re.compile("^GIT binary patch")
+
+class GitBinaryPatchMethod(FileData):
+    RE = re.compile("^(literal|delta) [0-9]+$")
+
+class GitBinaryPatchLine(FileData):
+    RE = re.compile("^[a-zA-Z].*")
+
+class GitBinaryPatchEndFragment(FileData):
+    RE = re.compile("^$")
+
 class HunkStart(FileData):
     RE = re.compile("^@@")
 
@@ -203,6 +215,16 @@ class LineLexer:
         self.__fp = fp
         self.__line = None
         self.__in_hunk = False
+
+        # State machine.
+        #  0: Not in a Git binary patch.
+        #  1: "GIT binary patch" seen.
+        #  2: First method line seen.  (Currently consuming patch data.)
+        #  3: First end marker seen.
+        #  4: Second method line seen.
+        #
+        # The state machine may successfully exit from state 2 or 4.
+        self.__git_binary_state = 0
         self.__line_number = 0
         self.__val = self.__next()
 
@@ -231,6 +253,7 @@ class LineLexer:
         GitModeChange,
         FromLine,
         ToLine,
+        GitBinaryPatchHeader,
         HunkStart,
         OnlyInFileLine,
         BinaryLine,
@@ -257,9 +280,52 @@ class LineLexer:
             if rv is not None:
                 return rv
             self.__in_hunk = False
+        elif self.__git_binary_state != 0:
+            # Git binary patches are more complex to parse than other
+            # patches, because it is harder to see where they end.
+            # GitBinaryPatchLine matches most every other line in a
+            # patch, so we must be careful to match for it only when
+            # we are in the correct state.
+            if self.__git_binary_state == 1:
+                rv = self.__match_rule([GitBinaryPatchMethod])
+                if rv is not None:
+                    self.__git_binary_state = 2
+                    return rv
+                self.report_err("GIT binary patch method found")
+                self.__git_binary_state = 0
+            elif self.__git_binary_state == 2:
+                rv = self.__match_rule([GitBinaryPatchLine,
+                                        GitBinaryPatchEndFragment])
+                if rv is not None:
+                    if isinstance(rv, GitBinaryPatchEndFragment):
+                        self.__git_binary_state = 3
+                    return rv
+                lexer.report_err("Unexpected end of GIT binary patch"
+                                 " forward fragment")
+            elif self.__git_binary_state == 3:
+                rv = self.__match_rule([GitBinaryPatchMethod])
+                if rv is not None:
+                    self.__git_binary_state = 4
+                    return rv
+                else:
+                    # This binary patch is not reversible, and has ended.
+                    # Parse the line as in the normal state.
+                    self.__git_binary_state = 0
+            elif self.__git_binary_state == 4:
+                rv = self.__match_rule([GitBinaryPatchLine,
+                                        GitBinaryPatchEndFragment])
+                if rv is not None:
+                    if isinstance(rv, GitBinaryPatchEndFragment):
+                        self.__git_binary_state = 0
+                    return rv
+                lexer.report_err("Unexpected end of GIT binary patch"
+                                 " reverse fragment")
+
         rv = self.__match_rule(self.RE_TO_TYPE)
         if isinstance(rv, HunkStart):
             self.__in_hunk = True
+        elif isinstance(rv, GitBinaryPatchHeader):
+            self.__git_binary_state = 1
         return rv
 
     def __next(self):
@@ -435,6 +501,104 @@ class BinaryHunk:
     def header_line(self):
         return "+- (above binary diff may or may not be the same)"
 
+class GitBinaryHunk:
+    def __init__(self, lexer):
+        self.__start = lexer.consume()
+        self.__lines = None
+
+        self.__forward, forward_status = self.__parse_fragment(lexer)
+        if forward_status is not None:
+            lexer.report_err(forward_status)
+        elif self.__forward is None:
+            lexer.report_err("Missing binary forward fragment")
+
+        self.__reverse, reverse_status = self.__parse_fragment(lexer)
+        if reverse_status is not None:
+            lexer.report_err(reverse_status)
+        # The reverse fragment is optional, so don't report an error
+        # if it is missing.
+
+        self.__hunk = []
+        if self.__forward is not None:
+            self.__hunk += self.__forward
+        if self.__reverse is not None:
+            self.__hunk += self.__reverse
+
+    def __parse_fragment(self, lexer):
+        if not isinstance(lexer.peek(), GitBinaryPatchMethod):
+            return None, None
+        frag = [lexer.consume()]
+        while isinstance(lexer.peek(), GitBinaryPatchLine):
+            frag.append(lexer.consume())
+        if isinstance(lexer.peek(), GitBinaryPatchEndFragment):
+            frag.append(lexer.consume())
+        else:
+            return None, "Malformed binary git patch"
+
+        return frag, None
+
+    def __lt__(self, other):
+        if not isinstance(other, GitBinaryHunk):
+            return NotImplemented
+
+        return self.__hunk < other.__hunk
+
+    def __le__(self, other):
+        if not isinstance(other, GitBinaryHunk):
+            return NotImplemented
+
+        return self.__hunk <= other.__hunk
+
+    def __ge__(self, other):
+        if not isinstance(other, GitBinaryHunk):
+            return NotImplemented
+
+        return self.__hunk >= other.__hunk
+
+    def __gt__(self, other):
+        if not isinstance(other, GitBinaryHunk):
+            return NotImplemented
+
+        return self.__hunk > other.__hunk
+
+    def __eq__(self, other):
+        if not isinstance(other, GitBinaryHunk):
+            return NotImplemented
+
+        return self.__hunk == other.__hunk
+
+    def __ne__(self, other):
+        if not isinstance(other, GitBinaryHunk):
+            return NotImplemented
+
+        return self.__hunk != other.__hunk
+
+    def __hash__(self):
+        h = 0
+        for line in self.__hunk:
+            h = h ^ hash(line)
+        return h
+
+    def format(self, header):
+        return [header + x.line() for x in [self.__start] + self.__hunk]
+
+    def lines(self):
+        if self.__lines is None:
+            self.__lines = [x.line() for x in self.__hunk]
+        return self.__lines
+
+    #    def changed_lines(self):
+    #        return self.__changes
+
+    def raw_lines(self):
+        return self.__hunk
+
+    def significant_lines(self):
+        return self.raw_lines()
+
+    def header_line(self):
+        return self.__start.line()
+
 class PatchFile:
     def __init__(self, lexer, skipnum, renames):
         self.__header = []
@@ -456,8 +620,11 @@ class PatchFile:
                 if not ASSUME_BINARY_UNCHANGED:
                     self.__hunks.append(BinaryHunk())
                 return
-        while isinstance(lexer.peek(), HunkStart):
-            self.__hunks.append(PatchHunk(lexer))
+        if isinstance(lexer.peek(), GitBinaryPatchHeader):
+            self.__hunks.append(GitBinaryHunk(lexer))
+        else:
+            while isinstance(lexer.peek(), HunkStart):
+                self.__hunks.append(PatchHunk(lexer))
 
     def filename(self):
         return self.__fn
