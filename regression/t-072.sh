@@ -214,3 +214,40 @@ cmd guilt push
 (cd sub && check_readme abc def ghi)
 cmd list_files
 cmd cat somebinary
+
+# Add a few more lines to "def" so that we can later rename it and
+# edit it in the same commit, and git will still realize it is a
+# rename + edit operation.
+cmd guilt new extenddef
+for i in `seq 2 10`; do
+	echo line $i >> def
+done
+cmd guilt ref
+cmd guilt pop
+fixup_time_info extenddef
+cmd guilt push
+
+# Rename and alter "def" slightly, and also make a change to the
+# submodule.  Check that we can push and pop the patch.
+cmd guilt new rename+edit
+cmd git mv def def.txt
+
+# This may be more portable than "sed -i".
+sed "s/line 3/LINE THREE/" def.txt > def.txt.new
+mv -f def.txt.new def.txt
+
+(cd sub && cmd git checkout feature)
+(cd sub && check_readme abc jkl)
+cmd guilt ref
+(cd sub && check_readme abc jkl)
+cmd cat def.txt
+shouldfail cat def
+cmd guilt pop
+fixup_time_info rename+edit
+(cd sub && check_readme abc def ghi)
+cmd cat def
+shouldfail cat def.txt
+cmd guilt push
+(cd sub && check_readme abc jkl)
+cmd cat def.txt
+shouldfail cat def

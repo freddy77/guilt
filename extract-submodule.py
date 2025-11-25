@@ -155,6 +155,18 @@ class GitModeChange(FileHeader):
     RE = re.compile("^(new|old) mode [0-7]+$")
     SCORE = 0
 
+class GitSimilarityIndex(FileHeader):
+    RE = re.compile("^similarity index [1-9][0-9]*%$")
+    SCORE = 0
+
+class GitRenameFrom(FileHeader):
+    RE = re.compile("^rename from (?P<filename>.*)$")
+    SCORE = 3
+
+class GitRenameTo(FileHeader):
+    RE = re.compile("^rename to (?P<filename>.*)$")
+    SCORE = 4
+
 class FromLine(FileHeader):
     RE = re.compile("^--- (?P<filename>[^\t]+)")
     SCORE = 3
@@ -251,6 +263,9 @@ class LineLexer:
         GitNewFile,
         GitDeletedFile,
         GitModeChange,
+        GitSimilarityIndex,
+        GitRenameFrom,
+        GitRenameTo,
         FromLine,
         ToLine,
         GitBinaryPatchHeader,
