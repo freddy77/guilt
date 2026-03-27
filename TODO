@@ -14,6 +14,7 @@ e.g., email may not be necessary as git can do that for us.
 	diff		done	done	various diffs
 	files		done	done	list files topmost patch modifies
 	fold		done	done	fold named patches into current
+	goto		done	done	push or pop patches to reach a named patch
 	graph		done	done	generate a patch dependency graph
 	header		done	done	print the header for a patch
 	help		done	done	display help
@@ -30,7 +31,7 @@ e.g., email may not be necessary as git can do that for us.
 	rebase		done	done	rebase the current patches
 	rpull				pull from a repo
 	rpush				push to a repo
-	rename				rename a patch
+	rename		done	done	rename a patch
 	refresh		done	done	refresh the current patch
 	repair		done	done	repair guilt repo state
 	rm		done	done	remove a file
@@ -46,17 +47,17 @@ Misc Bugs/Enhancements:
 Here are some things I want to do one of these days...
 
 - Make things work with an arbitrary point in history
-  $ git-checkout sometag
-  $ guilt-init
+  $ git checkout sometag
+  $ guilt init
   *poop*
 
 - Fix push/pop regression tests to cover --all/multi-patch cases
 
 - Add more regression tests:
 
-	- guilt-refresh --git
+	- guilt refresh --git
 
-	- guilt-refresh --diffstat
+	- guilt refresh --diffstat
 
 - Fix path munging in push_patch
 
@@ -67,16 +68,16 @@ Here are some things I want to do one of these days...
 - Make sure whitespace in patch names doesn't break anything ( => make
   regression tests)
 
-- Make guilt-help more intelligent about where it looks for man pages (maybe
-  try adding `dirname $0`/../man/ to the MANPATH inside guilt-help?)
+- Make guilt help more intelligent about where it looks for man pages (maybe
+  try adding `dirname $0`/../man/ to the MANPATH inside guilt help?)
 
 - If autotagging is disabled, should we remove any corresponding tags? Tags
   could have been disabled because of name collisions.
 
-- guilt-rebase: create at least _some_ regression tests
+- guilt rebase: create at least _some_ regression tests
 
-- guilt-new, guilt-fork, etc.: warn/die if the new patch name ends with '~'
+- guilt new, guilt fork, etc.: warn/die if the new patch name ends with '~'
 
-- guilt-diff: more modes
+- guilt diff: more modes
 
 - refresh, add options --strip-trailing-whitespace
