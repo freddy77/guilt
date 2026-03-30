@@ -125,7 +125,7 @@ guilt_commands()
 		# A bit more compatible than +111 (for instance works on OpenIndiana)
 		exe_test='( -perm -100 -o -perm -010 -o -perm -001 )'
 	fi
-	find "$GUILT_PATH/../lib/guilt" -maxdepth 1 -name "guilt-*" -type f $exe_test 2> /dev/null | sed -e "s/.*\\/$GUILT-//"
+	(cd "$GUILT_PATH/../lib/guilt" && noerr ls -1 guilt-*) | sed -e "s/.*\\/$GUILT-//"
 	find "$GUILT_PATH" -maxdepth 1 -name "guilt-*" -type f $exe_test | sed -e "s/.*\\/$GUILT-//"
 }
 
@@ -142,7 +142,7 @@ if [ $# -ne 0 ]; then
 	if [ -x "$dir/guilt-$arg" ]; then
 		cmd="$dir/guilt-$arg"
 		CMDNAME=$arg
-	elif [ -x "$libdir/guilt-$arg" ]; then
+	elif [ -r "$libdir/guilt-$arg" ]; then
 		cmd="$libdir/guilt-$arg"
 		CMDNAME=$arg
 	else
@@ -153,7 +153,7 @@ if [ $# -ne 0 ]; then
 				if [ -x "$dir/guilt-$command" ]; then
 					cmd="$dir/guilt-$command"
 					CMDNAME=$command
-				elif [ -x "$libdir/guilt-$command" ]; then
+				elif [ -r "$libdir/guilt-$command" ]; then
 					cmd="$libdir/guilt-$command"
 					CMDNAME=$command
 				fi
