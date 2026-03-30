@@ -90,14 +90,14 @@ noerr()
 
 silent()
 {
-	"$@" >/dev/null 2>/dev/null
+	"$@" >/dev/null 2>&1
 }
 
 toplevel=
 cd_to_toplevel_cached()
 {
 	[ -n "$toplevel" ] || toplevel=$(git rev-parse --show-toplevel)
-	cd "$toplevel" >/dev/null 2>&1 || cd_to_toplevel
+	silent cd "$toplevel" || cd_to_toplevel
 }
 
 need_work_tree()
@@ -119,7 +119,7 @@ guilt_commands()
 	# world (MacOS, Solaris, BSD, etc.) does.  Sigh.  Using -executable
 	# is arguably better, but it is a GNU extension.  Since this isn't
 	# a fast path and guilt doesn't use autoconf, test for it as needed.
-	if find . -maxdepth 0 -executable > /dev/null 2>&1 ; then
+	if silent find . -maxdepth 0 -executable; then
 		exe_test="-executable"
 	else
 		# A bit more compatible than +111 (for instance works on OpenIndiana)
