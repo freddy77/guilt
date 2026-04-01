@@ -5,6 +5,9 @@ fi
 
 set -e
 
+ORIG_PWD=$PWD
+typeset -r ORIG_PWD
+
 export PATH=$PWD/..:$PATH
 
 # "guilt help" should use man-pages from the source directory.
@@ -36,7 +39,7 @@ fi
 
 function replace_path
 {
-	sed -e "s,$PWD,PATH,g" \
+	sed -e "s,$ORIG_PWD,PATH,g" \
 	    -e "s,$REG_DIR/\.\./,,g" \
 	    -e "s,^Usage: guilt-,Usage: guilt ,g" \
 	    -e "s,\.\.\. initial, initial,g" \
