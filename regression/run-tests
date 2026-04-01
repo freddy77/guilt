@@ -32,6 +32,7 @@ DONE
 	then
 		cat $LOGFILE
 	fi
+	cat $LOGFILE
 	exit 1
 }
 
