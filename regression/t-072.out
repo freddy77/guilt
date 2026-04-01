@@ -1,5 +1,5 @@
-% git init --bare -b trunk /tmp/guilt test/test sub.git
-Initialized empty Git repository in /tmp/guilt test/test sub.git/
+% git init --bare -b trunk ../guilt test/test sub.git
+Initialized empty Git repository in PATH/guilt test/test sub.git/
 % git clone test sub.git copy
 Cloning into 'copy'...
 warning: You appear to have cloned an empty repository.
@@ -23,7 +23,7 @@ done.
  Author: Author Name <author@email>
  1 file changed, 1 insertion(+)
 % git push
-To /tmp/guilt test/test sub.git
+To PATH/guilt test/test sub.git
  * [new branch]      trunk -> trunk
 % test abc def ghi = abc def ghi
 % git checkout -b feature HEAD^^
@@ -34,7 +34,7 @@ Switched to a new branch 'feature'
  Author: Author Name <author@email>
  1 file changed, 1 insertion(+)
 % git push origin feature
-To /tmp/guilt test/test sub.git
+To PATH/guilt test/test sub.git
  * [new branch]      feature -> feature
 % setup_git_repo
 % guilt init
@@ -44,8 +44,8 @@ d .git/patches/master
 f da39a3ee5e6b4b0d3255bfef95601890afd80709  .git/patches/master/series
 f da39a3ee5e6b4b0d3255bfef95601890afd80709  .git/patches/master/status
 % guilt new add-submodule
-% git -c protocol.file.allow=always submodule add /tmp/guilt test/test sub.git sub
-Cloning into 'PATH/sub'...
+% git -c protocol.file.allow=always submodule add ../guilt test/test sub.git sub
+Cloning into 'PATH/main_repo/sub'...
 done.
 % git -c advice.detachedHead=false checkout HEAD^^
 HEAD is now at a7e7183 Initial commit of sub
@@ -55,31 +55,32 @@ Patch add-submodule refreshed
 abc
 % guilt pop
 Cleared directory 'sub'
-Submodule 'sub' (/tmp/guilt test/test sub.git) unregistered for path 'sub'
+Submodule 'sub' (../guilt test/test sub.git) unregistered for path 'sub'
 All patches popped.
 % cat sub/README
 cat: sub/README: No such file or directory
 % list_files
 d .git/patches
 d .git/patches/master
-f 47983ec5d6a525558c6c7ab031dfa14d7d039c2e  .git/patches/master/add-submodule
 f 5de5033dfe3b3d85722765bd23411d5b5025fd1b  .git/patches/master/series
 f da39a3ee5e6b4b0d3255bfef95601890afd80709  .git/patches/master/add-submodule~
 f da39a3ee5e6b4b0d3255bfef95601890afd80709  .git/patches/master/status
+f deba8d14ceef21cfa2a361d3aeac1d3a43144e11  .git/patches/master/add-submodule
 % git status --porcelain
 % guilt push
 Applying patch..add-submodule
-Submodule 'sub' (/tmp/guilt test/test sub.git) registered for path 'sub'
+warning: could not look up configuration 'remote.origin.url'. Assuming this repository is its own authoritative upstream.
+Submodule 'sub' (PATH/guilt test/test sub.git) registered for path 'sub'
 Submodule path 'sub': checked out 'a7e7183eb4d21bb19f54a6a25cc590843ebf578c'
 Patch applied.
 % list_files
 d .git/patches
 d .git/patches/master
-f 47983ec5d6a525558c6c7ab031dfa14d7d039c2e  .git/patches/master/add-submodule
 f 5de5033dfe3b3d85722765bd23411d5b5025fd1b  .git/patches/master/series
 f 5de5033dfe3b3d85722765bd23411d5b5025fd1b  .git/patches/master/status
 f da39a3ee5e6b4b0d3255bfef95601890afd80709  .git/patches/master/add-submodule~
-r 8b121046333c367b81bd566d4b3536ce7cb93bb3  .git/refs/patches/master/add-submodule
+f deba8d14ceef21cfa2a361d3aeac1d3a43144e11  .git/patches/master/add-submodule
+r 7afd881e767ad28ce66145d397f5ffe0f9646348  .git/refs/patches/master/add-submodule
 % cat sub/README
 abc
 % guilt pop
@@ -96,11 +97,12 @@ Previous HEAD position was d62f973 Extend README
 HEAD is now at a7e7183 Initial commit of sub
 % guilt pop
 Cleared directory 'sub'
-Submodule 'sub' (/tmp/guilt test/test sub.git) unregistered for path 'sub'
+Submodule 'sub' (../guilt test/test sub.git) unregistered for path 'sub'
 All patches popped.
 % guilt push
 Applying patch..add-submodule
-Submodule 'sub' (/tmp/guilt test/test sub.git) registered for path 'sub'
+warning: could not look up configuration 'remote.origin.url'. Assuming this repository is its own authoritative upstream.
+Submodule 'sub' (PATH/guilt test/test sub.git) registered for path 'sub'
 Submodule path 'sub': checked out 'a7e7183eb4d21bb19f54a6a25cc590843ebf578c'
 Patch applied.
 % guilt new local-changes
@@ -115,13 +117,13 @@ Now at add-submodule.
 % list_files
 d .git/patches
 d .git/patches/master
-f 47983ec5d6a525558c6c7ab031dfa14d7d039c2e  .git/patches/master/add-submodule
 f 4f9332dc0fef887588d95141dd620ed6d0cbd60a  .git/patches/master/series
 f 5de5033dfe3b3d85722765bd23411d5b5025fd1b  .git/patches/master/status
 f a4bcea8116a3ed6d5cd588051c2028e54443000d  .git/patches/master/local-changes
 f da39a3ee5e6b4b0d3255bfef95601890afd80709  .git/patches/master/add-submodule~
 f da39a3ee5e6b4b0d3255bfef95601890afd80709  .git/patches/master/local-changes~
-r 8b121046333c367b81bd566d4b3536ce7cb93bb3  .git/refs/patches/master/add-submodule
+f deba8d14ceef21cfa2a361d3aeac1d3a43144e11  .git/patches/master/add-submodule
+r 7afd881e767ad28ce66145d397f5ffe0f9646348  .git/refs/patches/master/add-submodule
 % guilt push
 Uncommited changes detected. Refresh first.
 % guilt push
@@ -154,16 +156,16 @@ Now at local-changes.
 % list_files
 d .git/patches
 d .git/patches/master
-f 47983ec5d6a525558c6c7ab031dfa14d7d039c2e  .git/patches/master/add-submodule
 f 4f9332dc0fef887588d95141dd620ed6d0cbd60a  .git/patches/master/status
 f 98bf8b29e2c5ae1049cca9edcbc25d69e7acb4a3  .git/patches/master/update-sub
 f a4bcea8116a3ed6d5cd588051c2028e54443000d  .git/patches/master/local-changes
 f da39a3ee5e6b4b0d3255bfef95601890afd80709  .git/patches/master/add-submodule~
 f da39a3ee5e6b4b0d3255bfef95601890afd80709  .git/patches/master/local-changes~
 f da39a3ee5e6b4b0d3255bfef95601890afd80709  .git/patches/master/update-sub~
+f deba8d14ceef21cfa2a361d3aeac1d3a43144e11  .git/patches/master/add-submodule
 f e06272da0dc999269d387dd5ec3882451e5744c2  .git/patches/master/series
-r 8b121046333c367b81bd566d4b3536ce7cb93bb3  .git/refs/patches/master/add-submodule
-r fbae6ca931b4c88f12fb694fbecace54c210ec95  .git/refs/patches/master/local-changes
+r 7afd881e767ad28ce66145d397f5ffe0f9646348  .git/refs/patches/master/add-submodule
+r bdbda442e0a00e3fad26b854021a40ee1ed725bb  .git/refs/patches/master/local-changes
 % test abc = abc
 % guilt series
 add-submodule
@@ -176,7 +178,7 @@ local-changes
 Applying patch..update-sub
 Previous HEAD position was a7e7183 Initial commit of sub
 HEAD is now at d62f973 Extend README
-[guilt/master 22853c8] patch update-sub
+[guilt/master cde6dba] patch update-sub
  Author: Author Name <author@email>
  Date: Mon Jan 1 00:00:00 2007 +0000
  1 file changed, 1 insertion(+), 1 deletion(-)
@@ -189,17 +191,17 @@ update-sub
 % list_files
 d .git/patches
 d .git/patches/master
-f 47983ec5d6a525558c6c7ab031dfa14d7d039c2e  .git/patches/master/add-submodule
 f 98bf8b29e2c5ae1049cca9edcbc25d69e7acb4a3  .git/patches/master/update-sub
 f a4bcea8116a3ed6d5cd588051c2028e54443000d  .git/patches/master/local-changes
 f da39a3ee5e6b4b0d3255bfef95601890afd80709  .git/patches/master/add-submodule~
 f da39a3ee5e6b4b0d3255bfef95601890afd80709  .git/patches/master/local-changes~
 f da39a3ee5e6b4b0d3255bfef95601890afd80709  .git/patches/master/update-sub~
+f deba8d14ceef21cfa2a361d3aeac1d3a43144e11  .git/patches/master/add-submodule
 f e06272da0dc999269d387dd5ec3882451e5744c2  .git/patches/master/series
 f e06272da0dc999269d387dd5ec3882451e5744c2  .git/patches/master/status
-r 22853c81644b0c41d6fb5f372e4186281cf9ecea  .git/refs/patches/master/update-sub
-r 8b121046333c367b81bd566d4b3536ce7cb93bb3  .git/refs/patches/master/add-submodule
-r fbae6ca931b4c88f12fb694fbecace54c210ec95  .git/refs/patches/master/local-changes
+r 7afd881e767ad28ce66145d397f5ffe0f9646348  .git/refs/patches/master/add-submodule
+r bdbda442e0a00e3fad26b854021a40ee1ed725bb  .git/refs/patches/master/local-changes
+r cde6dba51b7fc435e621cfe6d48ab31ec81e768b  .git/refs/patches/master/update-sub
 % git status --porcelain
 % guilt pop
 Submodule path 'sub': checked out 'a7e7183eb4d21bb19f54a6a25cc590843ebf578c'
@@ -208,22 +210,22 @@ Now at local-changes.
 % list_files
 d .git/patches
 d .git/patches/master
-f 47983ec5d6a525558c6c7ab031dfa14d7d039c2e  .git/patches/master/add-submodule
 f 4f9332dc0fef887588d95141dd620ed6d0cbd60a  .git/patches/master/status
 f 98bf8b29e2c5ae1049cca9edcbc25d69e7acb4a3  .git/patches/master/update-sub
 f a4bcea8116a3ed6d5cd588051c2028e54443000d  .git/patches/master/local-changes
 f da39a3ee5e6b4b0d3255bfef95601890afd80709  .git/patches/master/add-submodule~
 f da39a3ee5e6b4b0d3255bfef95601890afd80709  .git/patches/master/local-changes~
 f da39a3ee5e6b4b0d3255bfef95601890afd80709  .git/patches/master/update-sub~
+f deba8d14ceef21cfa2a361d3aeac1d3a43144e11  .git/patches/master/add-submodule
 f e06272da0dc999269d387dd5ec3882451e5744c2  .git/patches/master/series
-r 8b121046333c367b81bd566d4b3536ce7cb93bb3  .git/refs/patches/master/add-submodule
-r fbae6ca931b4c88f12fb694fbecace54c210ec95  .git/refs/patches/master/local-changes
+r 7afd881e767ad28ce66145d397f5ffe0f9646348  .git/refs/patches/master/add-submodule
+r bdbda442e0a00e3fad26b854021a40ee1ed725bb  .git/refs/patches/master/local-changes
 % git status --porcelain
 % guilt push
 Applying patch..update-sub
 Previous HEAD position was a7e7183 Initial commit of sub
 HEAD is now at d62f973 Extend README
-[guilt/master 22853c8] patch update-sub
+[guilt/master cde6dba] patch update-sub
  Author: Author Name <author@email>
  Date: Mon Jan 1 00:00:00 2007 +0000
  1 file changed, 1 insertion(+), 1 deletion(-)
@@ -243,7 +245,7 @@ Now at update-sub.
 Applying patch..use-feature
 Previous HEAD position was d62f973 Extend README
 HEAD is now at 8fd146e Featurize README
-[guilt/master fad0854] patch use-feature
+[guilt/master 38161a6] patch use-feature
  Author: Author Name <author@email>
  Date: Mon Jan 1 00:00:00 2007 +0000
  1 file changed, 1 insertion(+), 1 deletion(-)
@@ -251,7 +253,6 @@ Patch applied.
 % list_files
 d .git/patches
 d .git/patches/master
-f 47983ec5d6a525558c6c7ab031dfa14d7d039c2e  .git/patches/master/add-submodule
 f 98bf8b29e2c5ae1049cca9edcbc25d69e7acb4a3  .git/patches/master/update-sub
 f a4bcea8116a3ed6d5cd588051c2028e54443000d  .git/patches/master/local-changes
 f ced247018c07c1e911a4a8d9c12ce85c5f37fe7b  .git/patches/master/series
@@ -259,19 +260,21 @@ f ced247018c07c1e911a4a8d9c12ce85c5f37fe7b  .git/patches/master/status
 f da39a3ee5e6b4b0d3255bfef95601890afd80709  .git/patches/master/add-submodule~
 f da39a3ee5e6b4b0d3255bfef95601890afd80709  .git/patches/master/local-changes~
 f da39a3ee5e6b4b0d3255bfef95601890afd80709  .git/patches/master/update-sub~
+f deba8d14ceef21cfa2a361d3aeac1d3a43144e11  .git/patches/master/add-submodule
 f fe34b55263c76b2b4f374f1aa293105cc42a9002  .git/patches/master/use-feature
-r 22853c81644b0c41d6fb5f372e4186281cf9ecea  .git/refs/patches/master/update-sub
-r 8b121046333c367b81bd566d4b3536ce7cb93bb3  .git/refs/patches/master/add-submodule
-r fad0854bd2915f4b66cab5c08f05ad1ffa40665d  .git/refs/patches/master/use-feature
-r fbae6ca931b4c88f12fb694fbecace54c210ec95  .git/refs/patches/master/local-changes
+r 38161a662b324e8c64d90c1c06b2add840f9b71f  .git/refs/patches/master/use-feature
+r 7afd881e767ad28ce66145d397f5ffe0f9646348  .git/refs/patches/master/add-submodule
+r bdbda442e0a00e3fad26b854021a40ee1ed725bb  .git/refs/patches/master/local-changes
+r cde6dba51b7fc435e621cfe6d48ab31ec81e768b  .git/refs/patches/master/update-sub
 % guilt pop -a
 Cleared directory 'sub'
-Submodule 'sub' (/tmp/guilt test/test sub.git) unregistered for path 'sub'
+Submodule 'sub' (../guilt test/test sub.git) unregistered for path 'sub'
 All patches popped.
 % test -d sub
 % guilt push -a
 Applying patch..add-submodule
-Submodule 'sub' (/tmp/guilt test/test sub.git) registered for path 'sub'
+warning: could not look up configuration 'remote.origin.url'. Assuming this repository is its own authoritative upstream.
+Submodule 'sub' (PATH/guilt test/test sub.git) registered for path 'sub'
 Submodule path 'sub': checked out 'a7e7183eb4d21bb19f54a6a25cc590843ebf578c'
 Patch applied.
 Applying patch..local-changes
@@ -279,7 +282,7 @@ Patch applied.
 Applying patch..update-sub
 Previous HEAD position was a7e7183 Initial commit of sub
 HEAD is now at d62f973 Extend README
-[guilt/master 22853c8] patch update-sub
+[guilt/master cde6dba] patch update-sub
  Author: Author Name <author@email>
  Date: Mon Jan 1 00:00:00 2007 +0000
  1 file changed, 1 insertion(+), 1 deletion(-)
@@ -287,7 +290,7 @@ Patch applied.
 Applying patch..use-feature
 Previous HEAD position was d62f973 Extend README
 HEAD is now at 8fd146e Featurize README
-[guilt/master fad0854] patch use-feature
+[guilt/master 38161a6] patch use-feature
  Author: Author Name <author@email>
  Date: Mon Jan 1 00:00:00 2007 +0000
  1 file changed, 1 insertion(+), 1 deletion(-)
@@ -313,7 +316,7 @@ cat: somebinary: No such file or directory
 Applying patch..binary
 Previous HEAD position was 8fd146e Featurize README
 HEAD is now at 6ddad03 Refine README
-[guilt/master cf77d1b] patch binary
+[guilt/master de8e2a0] patch binary
  Author: Author Name <author@email>
  Date: Mon Jan 1 00:00:00 2007 +0000
  3 files changed, 2 insertions(+), 1 deletion(-)
@@ -324,7 +327,6 @@ Patch applied.
 % list_files
 d .git/patches
 d .git/patches/master
-f 47983ec5d6a525558c6c7ab031dfa14d7d039c2e  .git/patches/master/add-submodule
 f 98bf8b29e2c5ae1049cca9edcbc25d69e7acb4a3  .git/patches/master/update-sub
 f a4bcea8116a3ed6d5cd588051c2028e54443000d  .git/patches/master/local-changes
 f ad194509bf76d37b313bff5b7f7004b1e895000c  .git/patches/master/binary
@@ -332,14 +334,15 @@ f da39a3ee5e6b4b0d3255bfef95601890afd80709  .git/patches/master/add-submodule~
 f da39a3ee5e6b4b0d3255bfef95601890afd80709  .git/patches/master/binary~
 f da39a3ee5e6b4b0d3255bfef95601890afd80709  .git/patches/master/local-changes~
 f da39a3ee5e6b4b0d3255bfef95601890afd80709  .git/patches/master/update-sub~
+f deba8d14ceef21cfa2a361d3aeac1d3a43144e11  .git/patches/master/add-submodule
 f fe34b55263c76b2b4f374f1aa293105cc42a9002  .git/patches/master/use-feature
 f fee28ca20cf7cb7b3e85a0e0fbdb5e480acba56d  .git/patches/master/series
 f fee28ca20cf7cb7b3e85a0e0fbdb5e480acba56d  .git/patches/master/status
-r 22853c81644b0c41d6fb5f372e4186281cf9ecea  .git/refs/patches/master/update-sub
-r 8b121046333c367b81bd566d4b3536ce7cb93bb3  .git/refs/patches/master/add-submodule
-r cf77d1bb3c45e0741a298debd4ea9f8289954963  .git/refs/patches/master/binary
-r fad0854bd2915f4b66cab5c08f05ad1ffa40665d  .git/refs/patches/master/use-feature
-r fbae6ca931b4c88f12fb694fbecace54c210ec95  .git/refs/patches/master/local-changes
+r 38161a662b324e8c64d90c1c06b2add840f9b71f  .git/refs/patches/master/use-feature
+r 7afd881e767ad28ce66145d397f5ffe0f9646348  .git/refs/patches/master/add-submodule
+r bdbda442e0a00e3fad26b854021a40ee1ed725bb  .git/refs/patches/master/local-changes
+r cde6dba51b7fc435e621cfe6d48ab31ec81e768b  .git/refs/patches/master/update-sub
+r de8e2a01fac7b64db1c9c36d0915370fe8a8c0b6  .git/refs/patches/master/binary
 % cat somebinary
 hello
 % guilt new extenddef
@@ -394,7 +397,7 @@ cat: def.txt: No such file or directory
 Applying patch..rename+edit
 Previous HEAD position was 6ddad03 Refine README
 HEAD is now at 8fd146e Featurize README
-[guilt/master 1197796] patch rename+edit
+[guilt/master 5c80198] patch rename+edit
  Author: Author Name <author@email>
  Date: Mon Jan 1 00:00:00 2007 +0000
  2 files changed, 2 insertions(+), 2 deletions(-)

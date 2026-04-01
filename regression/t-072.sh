@@ -16,6 +16,9 @@ function check_readme
 	cmd test "`echo $content`" = "$*" || exit $?
 }
 
+mkdir main_repo
+cd main_repo
+mv ../.git .
 
 # The "git submodule add" command needs an upstream for the repository
 # that is going to be added as a submodule.  So in order to be able to
@@ -27,7 +30,7 @@ function check_readme
 # Using a fixed path in /tmp is a security risk, but unfortunately
 # there is no better location we can use.  Don't run the guilt
 # testsuite on machines you share with users you don't trust.
-UPSTREAM_SUBREPO_BASE="/tmp/guilt test"
+UPSTREAM_SUBREPO_BASE="../guilt test"
 UPSTREAM_SUBREPO="$UPSTREAM_SUBREPO_BASE/test sub.git"
 mkdir -p "$UPSTREAM_SUBREPO_BASE"
 
