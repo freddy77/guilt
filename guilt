@@ -787,25 +787,37 @@ EOF
 	)
 }
 
+extract_submodule()
+{
+	awk 'BEGIN{sm=0}
+sm {
+	if ($1 == "@@") next;
+	if ($1 == "---" || $1 == "+++") {
+		if (substr($2, 2, 1) == "/") {
+			fn = substr($2, 3)
+		}
+		next
+	}
+	if (substr($0, 2, 18) != "Subproject commit ")
+		exit 1;
+	if (substr($0, 1, 1) == "-") {
+		old = $3;
+		next
+	}
+	if (old == "" || fn == "")
+		exit 1;
+	print old " " $3 " " fn;
+	old = "";
+	fn = "";
+	sm = 0
+}
+$1 == "index" && $3 == "160000" {sm=1}' < "$1"
+}
+
 # usage: push_patch patchname [bail_action]
 push_patch()
 {
 	__push_patch_bail=0
-	if [ -z "$EXTRACT_SUBMODULE" ]
-	then
-		es=extract-submodule.py
-		if [ -r "$GUILT_PATH/../lib/guilt/$es" ]
-		then
-			export EXTRACT_SUBMODULE="$GUILT_PATH/../lib/guilt/$es"
-		elif [ -r "$GUILT_PATH/$es" ]
-		then
-			export EXTRACT_SUBMODULE="$GUILT_PATH/$es"
-		else
-			disp "Can't find $es" >&2
-			exit 1
-		fi
-	fi
-
 
 	(
 		DIFF_TMP="$tmpdir/diff"
@@ -844,10 +856,10 @@ push_patch()
 		git diff -r --raw --abbrev=40 --ignore-submodules=none $before HEAD > "$DIFF_TMP"
 		sed -n 's/:000000 160000 0000000000000000000000000000000000000000 [0-9a-f]* A	//p' "$DIFF_TMP" | while read fn
 		do
-			git submodule update --init $fn
+			git submodule update --init "$fn"
 		done
 
-		"$EXTRACT_SUBMODULE" "$p" > "$DIFF_TMP"
+		extract_submodule "$p" > "$DIFF_TMP"
 		need_refresh=false
 		while read old new file
 		do
@@ -1191,9 +1203,5 @@ if [ -n "`get_top 2>/dev/null`" ]; then
 else
 	old_style_prefix="$reuse_branch"
 fi
-
-# The path to extract-submodule.py.  Set by push_patch when needed;
-# only used by push_patch.
-export EXTRACT_SUBMODULE=""
 
 _main "$@"
