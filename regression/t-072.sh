@@ -55,6 +55,7 @@ cd copy
 echo abc > README
 cmd git add README
 cmd git commit -m"Initial commit of sub"
+cmd_silent git branch -M master trunk
 check_readme abc
 echo def >> README
 cmd git add README
@@ -63,7 +64,7 @@ check_readme abc def
 echo ghi >> README
 cmd git add README
 cmd git commit -m"Refine README"
-cmd git -c push.default=simple push
+cmd git -c push.default=simple push -u origin trunk
 check_readme abc def ghi
 cmd git checkout -b feature HEAD^^
 echo jkl >> README
