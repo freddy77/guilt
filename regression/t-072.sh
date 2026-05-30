@@ -92,6 +92,7 @@ cmd guilt pop
 fixup_time_info add-submodule
 shouldfail cat sub/README
 cmd list_files
+cat .git/patches/master/add-submodule
 cmd git status --porcelain
 
 # Push the patch that adds a submodule.
