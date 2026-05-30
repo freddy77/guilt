@@ -63,13 +63,13 @@ check_readme abc def
 echo ghi >> README
 cmd git add README
 cmd git commit -m"Refine README"
-cmd git push
+cmd git -c push.default=simple push
 check_readme abc def ghi
 cmd git checkout -b feature HEAD^^
 echo jkl >> README
 cmd git add README
 cmd git commit -m"Featurize README"
-cmd git push origin feature
+cmd git -c push.default=simple push origin feature
 cd "$OLD"
 
 cmd setup_git_repo
