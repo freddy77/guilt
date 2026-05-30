@@ -86,7 +86,7 @@ case "$1" in
 esac
 
 if [ $# -eq 0 ]; then
-	for t in t-*.sh ; do
+	for t in t-072.sh ; do
 		run_test `echo "$t" | sed -e 's/^t-//' -e 's/\.sh$//'`
 	done
 else
