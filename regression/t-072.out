@@ -1,5 +1,16 @@
-% git init --bare -b trunk ../guilt test/test sub.git
+% git init --bare ../guilt test/test sub.git
+hint: Using 'master' as the name for the initial branch. This default branch name
+hint: is subject to change. To configure the initial branch name to use in all
+hint: of your new repositories, which will suppress this warning, call:
+hint: 
+hint: 	git config --global init.defaultBranch <name>
+hint: 
+hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+hint: 'development'. The just-created branch can be renamed via this command:
+hint: 
+hint: 	git branch -m <name>
 Initialized empty Git repository in PATH/guilt test/test sub.git/
+% sh -c < "../guilt test/test sub.git/HEAD" sed -e 's,master,trunk,' > "../guilt test/test sub.git/HEAD2" && mv -f "../guilt test/test sub.git/HEAD2" "../guilt test/test sub.git/HEAD"
 % git clone test sub.git copy
 Cloning into 'copy'...
 warning: You appear to have cloned an empty repository.

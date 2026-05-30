@@ -46,7 +46,8 @@ fi
 rm -rf "$UPSTREAM_SUBREPO_BASE"
 
 # Populate the upstream git submodule repo.
-cmd git init --bare -b trunk "$UPSTREAM_SUBREPO"
+cmd git init --bare "$UPSTREAM_SUBREPO"
+cmd_silent sh -c "< \"$UPSTREAM_SUBREPO/HEAD\" sed -e 's,master,trunk,' > \"$UPSTREAM_SUBREPO/HEAD2\" && mv -f \"$UPSTREAM_SUBREPO/HEAD2\" \"$UPSTREAM_SUBREPO/HEAD\""
 OLD=`pwd`
 cd "$UPSTREAM_SUBREPO_BASE"
 cmd git clone "test sub.git" copy
