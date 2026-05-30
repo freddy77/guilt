@@ -47,7 +47,8 @@ function replace_path
 	    -e "s,^Switched to branch [\"']\([^\"']*\)[\"'],Switched to branch \"\1\",g" \
 	    -e "\\,^Deleted branch guilt/.* (was .*).$,d" \
 	    -e "s,This operation must be run in a work tree,this operation must be run in a work tree," \
-	    -e "s, cannot open \(.*\): No such file or directory, \1: No such file or directory,"
+	    -e "s, cannot open \(.*\): No such file or directory, \1: No such file or directory," \
+	    -e "s, can't open '\(.*\)': No such file or directory, \1: No such file or directory,"
 }
 
 # Newer dd does
