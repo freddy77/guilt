@@ -52,6 +52,7 @@ OLD=`pwd`
 cd "$UPSTREAM_SUBREPO_BASE"
 cmd git clone "test sub.git" copy
 cd copy
+git config push.default simple
 echo abc > README
 cmd git add README
 cmd git commit -m"Initial commit of sub"
@@ -65,13 +66,13 @@ check_readme abc def
 echo ghi >> README
 cmd git add README
 cmd git commit -m"Refine README"
-cmd git -c push.default=simple push -u origin trunk
+cmd git push -u origin trunk
 check_readme abc def ghi
 cmd git checkout -b feature HEAD^^
 echo jkl >> README
 cmd git add README
 cmd git commit -m"Featurize README"
-cmd git -c push.default=simple push origin feature
+cmd git push origin feature
 cd "$OLD"
 
 cmd setup_git_repo
