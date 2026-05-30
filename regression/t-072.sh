@@ -109,7 +109,7 @@ rm sub/dirty
 # Dirty by having changes to a tracked file.
 echo x >> sub/README
 shouldfail guilt pop
-(cd sub && git restore README)
+(cd sub && git checkout -- README)
 
 # Dirty by having a different commit checked out.
 (cd sub && cmd git checkout trunk^)
@@ -142,7 +142,7 @@ rm sub/dirty
 # Dirty by having changes to a tracked file.
 echo x >> sub/README
 shouldfail guilt push
-(cd sub && git restore README)
+(cd sub && git checkout -- README)
 
 # Dirty by having a different commit checked out.
 (cd sub && cmd git checkout trunk^)
