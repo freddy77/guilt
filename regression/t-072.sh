@@ -79,7 +79,7 @@ cmd list_files
 
 # Create a patch that adds a submodule.
 cmd guilt new add-submodule
-cmd git -c protocol.file.allow=always submodule add "$UPSTREAM_SUBREPO" sub
+cmd git -c protocol.file.allow=always submodule add -b trunk "$UPSTREAM_SUBREPO" sub
 (cd sub && cmd git -c advice.detachedHead=false checkout HEAD^^)
 cmd guilt ref
 cmd cat sub/README
