@@ -49,7 +49,8 @@ function replace_path
 	    -e "s,This operation must be run in a work tree,this operation must be run in a work tree," \
 	    -e "s, cannot open \(.*\): No such file or directory, \1: No such file or directory," \
 	    -e "s, can't open '\(.*\)': No such file or directory, \1: No such file or directory," \
-	    -e "s, is now at \([^ ]*\)\.\.\. , is now at \1 ,"
+	    -e "s, is now at \([^ ]*\)\.\.\. , is now at \1 ," \
+	    -e "s, position was \([^ ]*\)\.\.\. ,  position was \1 ,"
 }
 
 # Newer dd does
