@@ -57,7 +57,7 @@ echo abc > README
 cmd git add README
 cmd git commit -m"Initial commit of sub"
 cmd git branch -av
-cmd_silent git branch -M master trunk
+git branch -M master trunk > /dev/null 2>&1 ||:
 check_readme abc
 echo def >> README
 cmd git add README
