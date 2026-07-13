@@ -36,6 +36,73 @@ fi
 
 function replace_path
 {
+	# The original purpose of this function was to replace the
+	# current working directory with a constant string, so that
+	# the output would be the same no matter which directory the
+	# tests run in.
+	#
+	# It is now also responsible for normalizing the output of git
+	# (which occasionally improves in newer versions) so that
+	# tests can succeed even when using an older version of git.
+	#
+	# The rest of this comment documents the normalizations.
+	# Unless specifically noted, we normalize the output so that
+	# it matches the newest supported version of git.
+	#
+	# "git reset --hard" dots
+	# =======================
+	#
+	# When you do "git reset --hard committish" git prints a
+	# message about where you end up.
+	#
+	# * Historically: no such message was printed.
+	# * 1.5.0 and newer (see 95f2fb7d9f84 in the git repo):
+	#   HEAD is now at deadbeef subject line
+	# * 1.5.4 (see 0e5a7faa3a90 in the git repo):
+	#   HEAD is now at deadbeef... subject line
+	# * 1.5.5 and newer (see 2efb3b061709 in the git repo):
+	#   HEAD is now at deadbeef subject line
+	#
+	# We accommodate git 1.5.4 by removing the three dots when
+	# resetting to the commit named "initial".
+	#
+	# "git checkout b" while already on b
+	# ===================================
+	#
+	# When invoking "git checkout b" (or, more recently, "git
+	# switch b") while already working on that branch, git prints
+	# a message.
+	#
+	# * Historically:
+	#   Already on branch "b"
+	# * 1.5.5 and newer:
+	#   Already on "b"
+	# * 1.6.2 and newer:
+	#   Already on 'b'
+	#
+	# We transform the output to the 1.5.5 format.
+	#
+	# "git checkout b" while working on another branch
+	# ================================================
+	#
+	# * Historically:
+	#   Switched to branch "b"
+	# * 1.6.2.3 and newer (see 714fddf2fc50 in the git repo):
+	#   Switched to branch 'b'
+	#
+	# We transform the output to the historical format.
+	#
+	# "this operation must be run in a work tree"
+	# ===========================================
+	#
+	# Many git commands fail with an error message if invoked
+	# outside of a work tree.
+	#
+	# * Historically:
+	#   fatal: This operation must be run in a work tree
+	# * 2.17.0 and newer:
+	#   fatal: this operation must be run in a work tree
+
 	sed -e "s,$PWD,PATH,g" \
 	    -e "s,$REG_DIR/\.\./,,g" \
 	    -e "s,\.\.\. initial, initial,g" \
