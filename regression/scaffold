@@ -41,7 +41,6 @@ function replace_path
 	    -e "s,\.\.\. initial, initial,g" \
 	    -e "s,^Already on\( branch\)\? [\"']\([^\"']*\)[\"']$,Already on \"\2\",g" \
 	    -e "s,^Switched to branch [\"']\([^\"']*\)[\"'],Switched to branch \"\1\",g" \
-	    -e "\\,^Deleted branch guilt/.* (was .*).$,d" \
 	    -e "s,This operation must be run in a work tree,this operation must be run in a work tree,"
 }
 
