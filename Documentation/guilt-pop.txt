@@ -19,7 +19,7 @@ OPTIONS
 	Force; discards any unrefreshed changes
 
 -n <num>::
-	Push specified number of patches
+	Pop specified number of patches
 
 <patchname>::
 	Pop all patches up to and including this patch off the tree
