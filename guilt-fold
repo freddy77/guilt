@@ -57,6 +57,12 @@ if [ ! -z "$pline" ]; then
 	die "Patch is applied. Pop the patch first."
 fi
 
+# make sure there is at least one applied patch, so we have something
+# to fold it into
+if [ ! -s "$applied" ]; then
+	die "No patches applied."
+fi
+
 create_tmpdir
 fold_patch "$patch"
 

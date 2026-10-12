@@ -99,3 +99,8 @@ ensure 10
 shouldfail guilt fold
 cmd list_files
 ensure 10
+cmd guilt pop -a
+# We can't fold unless there is a patch to fold into.
+shouldfail guilt fold
+cmd git status --porcelain
+cmd list_files
