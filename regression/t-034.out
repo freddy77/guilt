@@ -565,3 +565,78 @@ r fdcb23c3072209bea3d9e0a2594132b936c5347e  .git/refs/patches/master/the_sequenc
 r fe07105cd62660f4440ad24b9fc7dfdd9e71d764  .git/refs/patches/master/two_consecutive_dots_._is_forbidden.patch
 % guilt pop -a
 All patches popped.
+% git checkout --orphan alt-history
+Switched to a new branch 'alt-history'
+% git rm -rf .
+rm 'def'
+% git commit --allow-empty -mA new beginning
+[alt-history (root-commit) e628435] A new beginning
+ Author: Author Name <author@email>
+% guilt init
+% guilt import-commit -P some-name some-branch
+About to begin conversion...
+Current head: e628435083489238fd02d243675e1bf56c529c19
+Converting 589ee305 as some-name
+Warning: commit 589ee305a82aacf155529e75cbc84e661c37c83d is not the HEAD...preserving commit
+Warning: (this message is displayed only once)
+Done.
+Current head: e628435083489238fd02d243675e1bf56c529c19
+% guilt import-commit -P series-1 some-branch^^^^..some-branch^
+About to begin conversion...
+Current head: e628435083489238fd02d243675e1bf56c529c19
+Converting c077fe20 as series-1
+Warning: commit c077fe203fd18036fb00b56eec1763673d1769c6 is not the HEAD...preserving commit
+Warning: (this message is displayed only once)
+Converting ee6ef2cc as series-1
+Patch under that name exists...trying 'series-1-1'
+Converting 70a83b70 as series-1
+Patch under that name exists...trying 'series-1-1'
+Patch under that name exists...trying 'series-1-2'
+Done.
+Current head: e628435083489238fd02d243675e1bf56c529c19
+% guilt applied
+% guilt unapplied
+series-1-2.patch
+series-1-1.patch
+series-1.patch
+some-name.patch
+% git log
+commit e628435083489238fd02d243675e1bf56c529c19
+Author: Author Name <author@email>
+Date:   Mon Jan 1 00:00:00 2007 +0000
+
+    A new beginning
+% list_files
+d .git/patches
+d .git/patches/alt-history
+d .git/patches/master
+f 07b24e1e6187f59424a8ca12f006e6b0fba45731  .git/patches/master/the_sequence_-._is_forbidden.patch
+f 0865142b73164c5ac04640eee70e77ba2aed6e78  .git/patches/master/openbracketisforbidden.patch
+f 17b96cbe0e501545ef88e74de6aff15076c02c6a  .git/patches/master/multiple-slashes--are--forbidden.patch
+f 1d74343c6720504c958fc468c5f6b14a83441b86  .git/patches/master/asterisk-is-forbidden.patch
+f 1efdbacace9de2ae5bc177c879948fe6095a4446  .git/patches/alt-history/some-name.patch
+f 1efdbacace9de2ae5bc177c879948fe6095a4446  .git/patches/master/delisforbidden.patch
+f 275690f65cdcda4cea926c80aed5c62c4099cae9  .git/patches/master/two_consecutive_dots_._is_forbidden.patch
+f 347a9a5bb00b63b0fc0f3457bdbd20dba7c8bf08  .git/patches/alt-history/series-1-1.patch
+f 347a9a5bb00b63b0fc0f3457bdbd20dba7c8bf08  .git/patches/master/caretisforbidden.patch
+f 3dcee4cc6d11e65cfafcdb770a71eba28ac61ebd  .git/patches/alt-history/series-1.patch
+f 3dcee4cc6d11e65cfafcdb770a71eba28ac61ebd  .git/patches/master/colon_is_forbidden.patch
+f 4a95bf932520c35772515eee7b9424995e426e89  .git/patches/alt-history/series
+f 5c9f9dc1a6016c79c3ee1f234ebb1e628747792e  .git/patches/master/cannot@have@the@sequence@at-brace.patch
+f 5d17b6d10ca389f7be4246c20d6da8a91ce39606  .git/patches/master/series
+f 73c9c0c841dba98440f5dbc873df0967e0f9b405  .git/patches/master/check-multiple-.-dots-.-foo.patch
+f 876f8f0177bd75e703e8721774432cb72e38b576  .git/patches/master/a-component-may-not-end-in-foolock.patch
+f 8f5e79c98e6324052d7a4e91cfb3364a0856890c  .git/patches/master/ctrlisforbidden.patch
+f 9045aff983b0747e90535cf3ffb7c37ce13dd15b  .git/patches/master/cannot-end-in-slash-.patch
+f 981c113a074f0b34e3ea5a1885593104b23a0fbf  .git/patches/master/backslash-is-forbidden.patch
+f a00696d9c3be3d2ecbd6ba08f720187c23ab1b46  .git/patches/master/question-mark-is-forbidden.patch
+f a691343f6c0f0deae351222a23f2e6711b61c2d6  .git/patches/master/can-have-embedded-single-slashes.patch
+f c142dcf030dbd72f030557ab3061f6378df3e048  .git/patches/master/the_sequence_.lock-_is_forbidden.patch
+f d18b7220242e4ece27ec42f7d661b703fe46dfa5  .git/patches/alt-history/series-1-2.patch
+f d18b7220242e4ece27ec42f7d661b703fe46dfa5  .git/patches/master/tildeisforbidden.patch
+f d66eecaa3e8aed2f173a2b9e530256ea3f1e8076  .git/patches/master/x.patch
+f da39a3ee5e6b4b0d3255bfef95601890afd80709  .git/patches/alt-history/status
+f da39a3ee5e6b4b0d3255bfef95601890afd80709  .git/patches/master/status
+f e39edbeb843f20712c2fa32ffef4d21af6529053  .git/patches/master/space_is_forbidden.patch
+f f6984e0dfdc1f2825afab36e175d22b771ff9206  .git/patches/master/crisalsoforbidden.patch
+f fe55a80ff8913d15b998ed9aeac4a1d0682070fd  .git/patches/master/cannot_end_in_.patch

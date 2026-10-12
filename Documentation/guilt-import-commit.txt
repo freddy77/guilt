@@ -13,9 +13,19 @@ DESCRIPTION
 -----------
 Import one or more commits as individual patches.
 
+The name of the patch is constructed from the subject line of the
+commit. The -P option can be used to override this. In both cases a
+suffix may be appended to make the name unique (so -P is useful even
+if you are importing a series of commits), and the .patch extension
+will be added.
+
 OPTIONS
 -------
 include::hash-range.txt[]
+
+-P <patchnamebase>::
+	Use the supplied <patchnamebase> instead of deriving it from
+	the subject line of the imported commit(s).
 
 Author
 ------

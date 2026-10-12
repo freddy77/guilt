@@ -3,7 +3,7 @@
 # Copyright (c) Josef "Jeff" Sipek, 2007-2013
 #
 
-USAGE="[<hash> | <since>..[<until>] | ..<until>]"
+USAGE="[-P <patchnamebase>] [<hash> | <since>..[<until>] | ..<until>]"
 if [ -z "$GUILT_VERSION" ]; then
 	echo "Invoking `basename "$0"` directly is no longer supported." >&2
 	exit 1
@@ -11,10 +11,15 @@ fi
 
 _main() {
 
+namebase=
+
 while [ $# -gt 0 ]; do
 	case "$1" in
 		-h|--help)
 			usage ;;
+		-P)
+			namebase=$2
+			shift 2 ;;
 		-*)
 			usage ;;
 		*)
@@ -43,10 +48,15 @@ for rev in `git rev-list $rhash`; do
 
 	# Try to convert the first line of the commit message to a
 	# valid patch name.
-	fname=`printf %s "$s" | sed -e "s/&/and/g" -e 'y; :?*/\\\\;__----;' \
-			-e "s/['\\[{}<>(),$]//g" -e 's/]//g' \
-			-e 's/\.\.\.*/./g' -e 's/^\.//' \
-			-e 's/\.patch$//' -e 's/\.$//' | tr A-Z a-z`
+	if [ -n "$namebase" ]; then
+		fname="$namebase"
+	else
+		fname=`printf %s "$s" |
+			sed -e "s/&/and/g" -e 'y; :?*/\\\\;__----;' \
+				-e "s/['\\[{}<>(),$]//g" -e 's/]//g' \
+				-e 's/\.\.\.*/./g' -e 's/^\.//' \
+				-e 's/\.patch$//' -e 's/\.$//' | tr A-Z a-z`
+	fi
 
 	if [ `printf %s "$fname" | wc -c` -gt 80 ] ; then
 		# Limit the patch length to about 80 chars.  While this is

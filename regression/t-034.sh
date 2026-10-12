@@ -71,3 +71,16 @@ cmd git log
 cmd git log some-branch
 cmd list_files
 cmd guilt pop -a
+
+# Create a new empty branch and import some commits there.
+cmd git checkout --orphan alt-history
+cmd git rm -rf .
+cmd git commit --allow-empty -m"A new beginning"
+cmd guilt init
+cmd guilt import-commit -P "some-name" some-branch
+cmd guilt import-commit -P series-1 some-branch^^^^..some-branch^
+cmd guilt applied
+cmd guilt unapplied
+cmd git log
+cmd list_files
+# Note: we can't apply these patches. They won't apply cleanly.
