@@ -91,7 +91,17 @@
 [master 2a8b188] Can/have/embedded/single/slashes
  Author: Author Name <author@email>
  1 file changed, 1 insertion(+)
+% create_commit a Hash#is#allowed#but#introduces#a#comment.
+[master 0db7d42] Hash#is#allowed#but#introduces#a#comment.
+ Author: Author Name <author@email>
+ 1 file changed, 1 insertion(+)
 % git log
+commit 0db7d42b1e03626ff595af58b8e42b0b8eb16825
+Author: Author Name <author@email>
+Date:   Mon Jan 1 00:00:00 2007 +0000
+
+    Hash#is#allowed#but#introduces#a#comment.
+
 commit 2a8b1889aa5066193bac978e6bf5073ffcfa6541
 Author: Author Name <author@email>
 Date:   Mon Jan 1 00:00:00 2007 +0000
@@ -235,7 +245,8 @@ Date:   Mon Jan 1 00:00:00 2007 +0000
 % git config log.decorate short
 % guilt import-commit base..HEAD
 About to begin conversion...
-Current head: 2a8b1889aa5066193bac978e6bf5073ffcfa6541
+Current head: 0db7d42b1e03626ff595af58b8e42b0b8eb16825
+Converting 0db7d42b as hash_is_allowed_but_introduces_a_comment
 Converting 2a8b1889 as can-have-embedded-single-slashes
 Converting 0a46f8fa as backslash-is-forbidden
 Converting aedb74fd as x
@@ -306,7 +317,15 @@ Applying patch..backslash-is-forbidden.patch
 Patch applied.
 Applying patch..can-have-embedded-single-slashes.patch
 Patch applied.
+Applying patch..hash_is_allowed_but_introduces_a_comment.patch
+Patch applied.
 % git log
+commit 47131cbfeca384f84fb0e5cce3d2f14dea071b20
+Author: Author Name <author@email>
+Date:   Mon Jan 1 00:00:00 2007 +0000
+
+    Hash#is#allowed#but#introduces#a#comment.
+
 commit 434e07cacdd8e7eb4723e67cb2d100b3a4121a3a
 Author: Author Name <author@email>
 Date:   Mon Jan 1 00:00:00 2007 +0000
@@ -526,15 +545,16 @@ f 275690f65cdcda4cea926c80aed5c62c4099cae9  .git/patches/master/two_consecutive_
 f 347a9a5bb00b63b0fc0f3457bdbd20dba7c8bf08  .git/patches/master/caretisforbidden.patch
 f 3dcee4cc6d11e65cfafcdb770a71eba28ac61ebd  .git/patches/master/colon_is_forbidden.patch
 f 5c9f9dc1a6016c79c3ee1f234ebb1e628747792e  .git/patches/master/cannot@have@the@sequence@at-brace.patch
-f 5d17b6d10ca389f7be4246c20d6da8a91ce39606  .git/patches/master/series
-f 5d17b6d10ca389f7be4246c20d6da8a91ce39606  .git/patches/master/status
 f 73c9c0c841dba98440f5dbc873df0967e0f9b405  .git/patches/master/check-multiple-.-dots-.-foo.patch
 f 876f8f0177bd75e703e8721774432cb72e38b576  .git/patches/master/a-component-may-not-end-in-foolock.patch
 f 8f5e79c98e6324052d7a4e91cfb3364a0856890c  .git/patches/master/ctrlisforbidden.patch
 f 9045aff983b0747e90535cf3ffb7c37ce13dd15b  .git/patches/master/cannot-end-in-slash-.patch
+f 952cb704911140796aa9ee44a7f90c3eb64cc58c  .git/patches/master/hash_is_allowed_but_introduces_a_comment.patch
 f 981c113a074f0b34e3ea5a1885593104b23a0fbf  .git/patches/master/backslash-is-forbidden.patch
 f a00696d9c3be3d2ecbd6ba08f720187c23ab1b46  .git/patches/master/question-mark-is-forbidden.patch
 f a691343f6c0f0deae351222a23f2e6711b61c2d6  .git/patches/master/can-have-embedded-single-slashes.patch
+f c066f8ca77d63d48a3e8d87428ca3f8611979478  .git/patches/master/series
+f c066f8ca77d63d48a3e8d87428ca3f8611979478  .git/patches/master/status
 f c142dcf030dbd72f030557ab3061f6378df3e048  .git/patches/master/the_sequence_.lock-_is_forbidden.patch
 f d18b7220242e4ece27ec42f7d661b703fe46dfa5  .git/patches/master/tildeisforbidden.patch
 f d66eecaa3e8aed2f173a2b9e530256ea3f1e8076  .git/patches/master/x.patch
@@ -547,6 +567,7 @@ r 10433fd7206b7f79aabb4da514710d93c8deed4a  .git/refs/patches/master/colon_is_fo
 r 1626a11d979a1e9e775c766484172212277153df  .git/refs/patches/master/asterisk-is-forbidden.patch
 r 3a0d5ccef0359004fcaa9cee98fbd6a2c4432e74  .git/refs/patches/master/tildeisforbidden.patch
 r 434e07cacdd8e7eb4723e67cb2d100b3a4121a3a  .git/refs/patches/master/can-have-embedded-single-slashes.patch
+r 47131cbfeca384f84fb0e5cce3d2f14dea071b20  .git/refs/patches/master/hash_is_allowed_but_introduces_a_comment.patch
 r 74df14ab3a0ec9a0382998fbf167ebb1b0a36c6a  .git/refs/patches/master/question-mark-is-forbidden.patch
 r 7c3ffa4f940c862e9f11f5d4a5ae421f7a8d3141  .git/refs/patches/master/backslash-is-forbidden.patch
 r 96a3e92c4df85f52362ce4f6d31983c462db9ae9  .git/refs/patches/master/a-component-may-not-end-in-foolock.patch
@@ -623,14 +644,15 @@ f 3dcee4cc6d11e65cfafcdb770a71eba28ac61ebd  .git/patches/alt-history/series-1.pa
 f 3dcee4cc6d11e65cfafcdb770a71eba28ac61ebd  .git/patches/master/colon_is_forbidden.patch
 f 4a95bf932520c35772515eee7b9424995e426e89  .git/patches/alt-history/series
 f 5c9f9dc1a6016c79c3ee1f234ebb1e628747792e  .git/patches/master/cannot@have@the@sequence@at-brace.patch
-f 5d17b6d10ca389f7be4246c20d6da8a91ce39606  .git/patches/master/series
 f 73c9c0c841dba98440f5dbc873df0967e0f9b405  .git/patches/master/check-multiple-.-dots-.-foo.patch
 f 876f8f0177bd75e703e8721774432cb72e38b576  .git/patches/master/a-component-may-not-end-in-foolock.patch
 f 8f5e79c98e6324052d7a4e91cfb3364a0856890c  .git/patches/master/ctrlisforbidden.patch
 f 9045aff983b0747e90535cf3ffb7c37ce13dd15b  .git/patches/master/cannot-end-in-slash-.patch
+f 952cb704911140796aa9ee44a7f90c3eb64cc58c  .git/patches/master/hash_is_allowed_but_introduces_a_comment.patch
 f 981c113a074f0b34e3ea5a1885593104b23a0fbf  .git/patches/master/backslash-is-forbidden.patch
 f a00696d9c3be3d2ecbd6ba08f720187c23ab1b46  .git/patches/master/question-mark-is-forbidden.patch
 f a691343f6c0f0deae351222a23f2e6711b61c2d6  .git/patches/master/can-have-embedded-single-slashes.patch
+f c066f8ca77d63d48a3e8d87428ca3f8611979478  .git/patches/master/series
 f c142dcf030dbd72f030557ab3061f6378df3e048  .git/patches/master/the_sequence_.lock-_is_forbidden.patch
 f d18b7220242e4ece27ec42f7d661b703fe46dfa5  .git/patches/alt-history/series-1-2.patch
 f d18b7220242e4ece27ec42f7d661b703fe46dfa5  .git/patches/master/tildeisforbidden.patch

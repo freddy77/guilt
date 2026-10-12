@@ -53,6 +53,10 @@ cmd create_commit a "Backslash\\is\\forbidden."
 # Slash is sometimes allowed; this is not problematic.
 cmd create_commit a "Can/have/embedded/single/slashes"
 
+# A hash can be used in a git ref, but would introduce a comment in
+# the series file, so we can't use that after all.
+cmd create_commit a "Hash#is#allowed#but#introduces#a#comment."
+
 cmd git log
 
 # Import all the commits to guilt.
